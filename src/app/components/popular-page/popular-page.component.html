@@ -1,0 +1,13 @@
+<app-navigation-panel></app-navigation-panel>
+<span class="cards" >
+    <span *ngFor="let cardInformation of exampleCardsArray" class="popularCard">
+        <h1 class="title">{{cardInformation.title}}</h1>
+        <span class="decorations">
+            <span class="cardDescriptionSpan">
+                <h2 class="cardDescription">{{cardInformation.description}}</h2>
+                <h3 class="cardsubDescription">{{cardInformation.subDescription}}</h3>
+            </span>
+            <img class="image" [src]="'assets/images/'+cardInformation.imgLink" alt=":3">
+        </span>
+    </span>
+</span>

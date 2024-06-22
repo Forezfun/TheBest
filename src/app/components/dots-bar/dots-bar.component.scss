@@ -1,0 +1,40 @@
+.dotsBar{
+    width: 80%;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    place-items: center;
+}
+.bar{
+    display: flex;
+    flex-direction: row;
+    grid-area: 1 / 1 / 2 / 2;
+    z-index: 3;
+    gap: 5vw;
+}
+.dotsBar hr {
+    grid-area: 1 / 1 / 2 / 2;
+    width: 100%;
+    align-self: flex-start;
+    z-index: 0;
+    border-color: black;
+}
+.series{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+.series * {
+    pointer-events: none;
+}
+.dot{
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    border: 3px black solid;
+    background-color: white;
+}
+.active{
+    background-color: black;
+}

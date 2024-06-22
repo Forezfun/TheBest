@@ -1,0 +1,52 @@
+@import '../../../styles.scss';
+*{
+    font-family: Rubik Mono One;
+}
+.cards{
+    display: flex;
+    flex-direction: column;
+    gap:30px;
+    align-items: center;
+    margin-top: 50px;
+}
+.popularCard{
+    cursor: pointer;
+    width:40vw;
+    height:25vw;
+    border-radius: 20px;
+    box-shadow: $cardShadow;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.title{
+    text-align: center;
+    margin-top: 5%;
+    height: 25%;
+    // margin-bottom: 10px;
+}
+.decorations{
+    display: flex;
+    justify-content: center;
+    height: 75%;
+}
+.cardDescriptionSpan{
+    display: flex;
+    width:50%;
+    flex-direction: column;
+    gap:15px;
+    align-items: center;
+    margin-left: 30px;
+}
+.cardDescription{
+    // width:75%
+}
+.cardsubDescription{
+    color:gray;
+    // width:75%
+}
+.image{
+    max-height: 100%;
+    max-width:50%;
+    align-self: flex-end;
+}

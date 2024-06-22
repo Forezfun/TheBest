@@ -1,0 +1,96 @@
+@import '../../../styles.scss';
+
+* {
+    font-family: Rubik Mono One;
+}
+.createModule{
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+}
+.createCard {
+    width: 40vw;
+    height: 25vw;
+    border-radius: 20px;
+    box-shadow: $cardShadow;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.input {
+    outline: none;
+    border: none;
+    white-space: pre-wrap;
+}
+
+.titleInput {
+    font-size: 1.75vw;
+    text-align: center;
+    margin-top: 5%;
+    height: 10%;
+}
+
+.titleInput::placeholder {
+    color: black;
+}
+
+.decorations {
+    display: flex;
+    flex-direction: row;
+    // gap:15px;
+    height: 90%;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cardDescriptionSpan {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 40%;
+    margin-left: 30px;
+}
+
+.descriptionInput {
+    color: black;
+    font-size: 1.25vw;
+    overflow: hidden;
+}
+
+.descriptionInput::placeholder {
+    color: black
+}
+
+.subDescriptionInput {
+    color: gray;
+    font-size: 1vw;
+    overflow: hidden;
+}
+
+.chooseImgSpan {
+    width: 50%;
+    height: 90%;
+    border: 3px dotted black;
+    align-self: flex-end;
+    border-radius: 20px 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    place-items: center;
+    cursor: pointer;
+}
+
+.chooseIcon {
+    grid-area: 1 / 1 / 2 / 2;
+    width:25%;
+}
+
+.choosedImg {
+    grid-area: 1 / 1 / 2 / 2;
+}
+
+.disabled {
+    display: none;
+}
