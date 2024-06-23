@@ -1,6 +1,6 @@
 import { NavigationPanelComponent } from '../navigation-panel/navigation-panel.component';
-import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Component, ViewChild, TemplateRef, AfterViewInit, OnInit, ChangeDetectorRef } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule,FormControl } from '@angular/forms';
+import { Component, ViewChild, TemplateRef, AfterViewInit, OnInit, ChangeDetectorRef, ElementRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-login-page',
@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
 })
 export class LoginPageComponent implements OnInit, AfterViewInit {
   loginForm!: FormGroup;
-  constructor(private fb: FormBuilder, private cdr: ChangeDetectorRef) { }
+  constructor(private fb: FormBuilder, private cdr: ChangeDetectorRef,private el: ElementRef) { }
   @ViewChild('login') loginTemplate!: TemplateRef<any>
   @ViewChild('enterEmail') emailTemplate!: TemplateRef<any>
   @ViewChild('enterCode') codeTemplate!: TemplateRef<any>
@@ -20,21 +20,23 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
   span!: HTMLSpanElement
   ngOnInit(): void {
     this.loginForm = this.fb.group({
-      email: [''],
-      password: [''],
-      // email: ['', [Validators.required, Validators.email]],
-      // password: ['', [Validators.required, Validators.minLength(6)]],
-      code: [''],
-      resetPassword: [''],
-      resetPasswordCheck: ['']
+      email:new FormControl(''),
+      password: new FormControl(''),
+      // email: new FormControl('', [Validators.required, Validators.email]),
+      // password: new FormControl('', [Validators.required, Validators.minLength(6)]),
+      code: new FormControl(''),
+      resetPassword: new FormControl(''),
+      resetPasswordCheck: new FormControl(''),
     });
   }
   ngAfterViewInit(): void {
     this.currentTemplate = this.loginTemplate;
     this.cdr.detectChanges();
-    this.span = document.querySelector('.loginSpan') as HTMLSpanElement
+    this.span = this.el.nativeElement.querySelector('.loginSpan') as HTMLSpanElement
   }
-  loginUser() { }
+  loginUser() { 
+    console.log(this.loginForm.value)
+  }
   opacityAnimation() {
     this.span.classList.add('opacityAnimationClass')
     setTimeout(() => { this.span.classList.remove('opacityAnimationClass') }, 800)

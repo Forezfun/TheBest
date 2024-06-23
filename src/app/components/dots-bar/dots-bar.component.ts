@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter, AfterViewInit, Renderer2, OnDestroy } from '@angular/core';
-import { NgFor } from '@angular/common';
+import { Component, Input, Output, EventEmitter, AfterViewInit, Renderer2, OnDestroy, ElementRef,PLATFORM_ID, Inject } from '@angular/core';
+import { NgFor, isPlatformBrowser } from '@angular/common';
 @Component({
   selector: 'app-dots-bar',
   standalone: true,
@@ -8,14 +8,14 @@ import { NgFor } from '@angular/common';
   styleUrl: './dots-bar.component.scss'
 })
 export class DotsBarComponent implements AfterViewInit, OnDestroy {
-  constructor(private render: Renderer2) { }
+  constructor(private render: Renderer2,private el:ElementRef,@Inject(PLATFORM_ID) private platformId: Object) { }
   @Input() dotsArray!: string[]
   @Output() iphoneIdEmitter = new EventEmitter<number>();
   currentDotId: number = 0;
   timer!: any
   dotsElementsArray!: NodeListOf<Element>
   ngAfterViewInit(): void {
-    this.dotsElementsArray = document.querySelectorAll('.dot')
+    this.dotsElementsArray = this.el.nativeElement.querySelectorAll('.dot')
     this.dotsElementsArray[0].classList.add('active')
     this.setTimerChanges()
   }
@@ -23,6 +23,7 @@ export class DotsBarComponent implements AfterViewInit, OnDestroy {
     clearInterval(this.timer)
   }
   setTimerChanges(){
+    if (!isPlatformBrowser(this.platformId))return
     this.timer = window.setInterval(() => {
       const lastDotId = this.currentDotId
       this.currentDotId < this.dotsArray.length - 1 ? this.currentDotId++ : this.currentDotId = 0

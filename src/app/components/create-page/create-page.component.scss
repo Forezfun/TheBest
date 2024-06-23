@@ -6,7 +6,8 @@
 .createModule{
     margin-top: 50px;
     display: flex;
-    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 .createCard {
     width: 40vw;
@@ -93,4 +94,19 @@
 
 .disabled {
     display: none;
+}
+
+.submitBtn{
+    background-color: white;
+    border: none;
+    color:black;
+    border-radius: 15px;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    box-shadow: $cardShadow;
+    align-content: center;
+    width:17vw;
+    height: 7vh;
+    font-size: 1vw;
 }
