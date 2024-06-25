@@ -1,0 +1,60 @@
+<app-navigation-panel></app-navigation-panel>
+
+<span class="accountCard">
+    <span class="accountInformation">
+        <div class="accountImageCard">
+            <img src="assets/images/addIcon.svg" alt="Add Icon" class="addIcon">
+            <img [src]="exampleUserInformation.photoUrl" alt="Account Photo" class="accountPhoto">
+        </div>
+        <ng-container *ngTemplateOutlet="currentTemplate"></ng-container>
+    </span>
+    <span class="accountsProjects">
+        <a href="" class="accountProject" *ngFor="let project of exampleUserInformation.projects; let i = index">
+            <h2 class="userProjectTitle">{{i + 1}}. {{project.name}}</h2>
+            <img src="assets/images/editIcon.svg" alt="" class="editIcon">
+        </a>
+    </span>
+</span>
+
+<ng-template #accountInformation let-userInformation>
+    <span class="templateSpan">
+        <span class="accountData">
+            <div class="propertyBlock">
+                <h2 class="informationTitle">Nickname:</h2>
+                <h3 class="informationArea">{{exampleUserInformation.nickname}}</h3>
+            </div>
+            <div class="propertyBlock">
+                <h2 class="informationTitle">Email:</h2>
+                <h3 class="informationArea">{{exampleUserInformation.email}}</h3>
+            </div>
+            <div class="propertyBlock">
+                <h2 class="informationTitle">Password:</h2>
+                <h3 class="informationArea">{{exampleUserInformation.password}}</h3>
+            </div>
+        </span>
+        <img src="assets/images/editIcon.svg" (click)="openChangeTemplate()" alt="" class="editIcon">
+    </span>
+</ng-template>
+
+<ng-template #changeAccountInformation let-userInformation>
+    <form [formGroup]="changeInformationForm" class="templateSpan">
+        <span class="accountData">
+            <div class="propertyBlock">
+                <label for="nicknameInput" class="informationTitle">Nickname:</label>
+                <input id="nicknameInput" formControlName="nickname" placeholder="Enter nickname" class="accountPasswordInput Input">
+            </div>
+            <div class="propertyBlock">
+                <label for="emailInput" class="informationTitle">Email:</label>
+                <input id="emailInput" formControlName="email" placeholder="Enter email" class="accountPasswordInput Input">
+            </div>
+            <div class="propertyBlock">
+                <label for="passwordInput" class="informationTitle">Password:</label>
+                <input id="passwordInput" formControlName="password" placeholder="Enter password" class="accountPasswordInput Input">
+            </div>
+        </span>
+        <span class="functionalsBtns">
+            <img src="assets/images/acceptIcon.svg" alt="" (click)="confirmChanges()" class="functionalIcon" type="submit">
+            <img src="assets/images/cancelIcon.svg" alt="" class="functionalIcon" (click)="openDefaultTemplate()">
+        </span>
+    </form>
+</ng-template>

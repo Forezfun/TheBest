@@ -1,0 +1,35 @@
+<div class="body">
+    <app-navigation-panel></app-navigation-panel>
+    <span class="example">
+        <app-dots-bar (iphoneIdEmitter)="changeIphoneId($event)" [dotsArray]="dotsArrayCheck"></app-dots-bar>
+        <div #informationCard class="informationExample">
+            <div class="descriptionExample">
+                <h2 class="descriptionPropertiesExample">прочитайте историю всей серии продукта и посмотрите
+                    характеристики
+                </h2>
+                <div class="spanPropertiesExample">
+                    <img class="imagePropertiesExample rotateAnimation" src="assets/images/settingsIcon.svg" alt=":3">
+                    <h3>Характеристики:</h3>
+                </div>
+                <h3 class="propertiesInformation">ОЗУ: {{informationExampleArray[currentIphoneId].Ram}} <br>
+                    АККУМУЛЯТОР:
+                    {{informationExampleArray[currentIphoneId].Acc}} <br> КАМЕРА:
+                    {{informationExampleArray[currentIphoneId].Cam}}</h3>
+            </div>
+            <img [src]="'assets/images/'+informationExampleArray[currentIphoneId].Photo" alt=":3" class="photoExample">
+        </div>
+    </span>
+    <a href="popular" class="popularBtn someBtn">ПОПУЛЯРНОЕ</a>
+</div>
+    <h1 class="historyTitle">Создайте историю</h1>
+    <span class="exampleCard">
+        <div class="historyExample">iPhone был представлен компанией Apple в 2007 году, став революционным моментом в
+            мире мобильных технологий благодаря своему мультитач-интерфейсу и широким возможностям приложений.</div>
+        <span class="historyInformationExample">
+            <h2>Составьте историю продукта
+                и стилизуйте пост</h2>
+            <h3 style="color:gray">Обозначьте характерстики продукта</h3>
+            <a href="create" class="createBtn someBtn">НАЧНИТЕ СЕЙЧАС</a>
+        </span>
+    </span>
+ 

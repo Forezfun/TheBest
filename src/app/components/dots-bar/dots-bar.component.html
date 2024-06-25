@@ -1,0 +1,9 @@
+<span class="dotsBar">
+    <span class="bar">
+        <div class="series" (click)="chooseDot($event);" *ngFor="let name of dotsArray; let i = index" >
+            <div [attr.id]="i" class="dot"></div>
+            <h3>{{name}}</h3>
+        </div>
+    </span>
+    <hr>
+</span>

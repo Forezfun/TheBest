@@ -1,0 +1,31 @@
+<app-navigation-panel></app-navigation-panel>
+<form class="createModule">
+    <span class="createCard">
+        <input maxlength="20" type="text" placeholder="Заголовок" class="titleInput input" />
+        <span class="decorations">
+            <span class="cardDescriptionSpan">
+                <textarea maxlength="60" placeholder="Описание статьи" class="descriptionInput input" type="text"></textarea>
+                <textarea maxlength="40" placeholder="Дополнение" class="subDescriptionInput input" type="text"></textarea>
+            </span>
+            <span class="chooseImgSpan">
+                <img class="chooseIcon" src="assets/images/addIcon.svg" alt=":3" />
+                <img [src]="" alt="" class="choosedImg" />
+            </span>
+        </span>
+    </span>
+    <span class="namesModule">
+        <button (ngSubmit)="onSumbit()" class="submitBtn someCard chooseElements">Опубликовать</button>
+        <span class="nameAddSpan">
+            <div *ngFor="let item of names; let i = index" class="nameAddModule">
+                <input required type="text" maxlength="10" class="inputName chooseElements" [placeholder]="'название №'+(i+1)">
+                <span class="chooseFunctions chooseElements">
+                    <div class="helpInformation">
+                        <h2 class="chooseDescription">Основной текст <br> doc/docx</h2>
+                        <img class="addIcon" src="assets/images/addIcon.svg" alt=":3">
+                    </div>
+                    <input required  accept=".doc,.docx" type="file" name="" class="addInput">
+                </span>
+            </div>
+        </span>
+    </span>
+</form>

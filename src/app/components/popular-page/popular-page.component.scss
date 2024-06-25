@@ -1,0 +1,89 @@
+@import '../../../styles.scss';
+
+* {
+    font-family: Rubik Mono One;
+}
+
+.cards {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.popularCard {
+    cursor: pointer;
+    width: 40vw;
+    height: 25vw;
+    border-radius: 20px;
+    box-shadow: $cardShadow;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.title {
+    text-align: center;
+    margin-top: 5%;
+    height: 25%;
+    // margin-bottom: 10px;
+}
+
+.decorations {
+    display: flex;
+    justify-content: center;
+    height: 75%;
+}
+
+.cardDescriptionSpan {
+    display: flex;
+    width: 50%;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    margin-left: 30px;
+}
+
+.cardDescription {}
+
+.cardsubDescription {
+    color: gray;
+
+}
+
+.image {
+    max-height: 100%;
+    max-width: 50%;
+    align-self: flex-end;
+}
+
+.finder {
+    padding: 10px;
+    width: calc(40vw - 20px);
+    height: calc(6vh - 20px);
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+    gap: 10px;
+    box-shadow: $cardShadow;
+    background-color: white;
+    border: none;
+    border-radius: 15px;
+    margin: 0 auto;
+    margin-top: 30px;
+}
+
+.inputFinder {
+    border: none;
+    background: none;
+    outline: none;
+    height: 100%;
+    width: 60%;
+}
+
+.iconFinder {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+}

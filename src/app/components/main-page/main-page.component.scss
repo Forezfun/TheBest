@@ -1,0 +1,128 @@
+@import '../../../styles.scss';
+* {
+    font-family: Rubik Mono One;
+}
+
+app-dots-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
+}
+.example{
+    margin-top: 50px;
+}
+.spanPropertiesExample {
+    color: gray;
+    display: flex;
+
+}
+
+.informationExample {
+    display: flex;
+    width: 60vw;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: start;
+}
+
+.descriptionExample {
+    width: 50%;
+}
+
+.propertiesInformation {
+    color: gray;
+}
+
+.normalobject {
+    position: relative;
+}
+
+.photoExample {
+    height: 25vw;
+}
+
+.exampleFixed {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.opacityAnimation {
+    animation: opacityAnimation 1s forwards;
+}
+
+.descriptionPropertiesExample {
+    max-width: 500px;
+}
+
+.rotateAnimation {
+    animation: rotate 5s linear infinite;
+    
+}
+.someBtn{
+    background-color: black;
+    color:white;
+    border-radius: 15px;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    align-content: center;
+}
+.popularBtn{
+    margin: 0 auto;
+    margin-top: 30px;
+    width:20vw;
+    height: 7vh;
+}
+.exampleCard{
+    display: flex;
+    flex-direction: row;
+    gap:30px;
+    width:40%;
+    margin: 0 auto;
+}
+.historyTitle{
+    text-align: center;
+    margin: 30px 0 ;
+    margin-top: 50px;
+}
+
+.historyExample{
+    background-color: white;
+    box-shadow: $cardShadow;
+    padding: 15px;
+    border-radius: 15px;
+    width:50%;
+}
+.historyInformationExample{
+    width:50%
+}
+.createBtn{
+    width: 75%;
+    height: 30%;
+}
+@keyframes opacityAnimation {
+    0% {
+        opacity: 1;
+    }
+
+    40% {
+        opacity: 0;
+    }
+    60% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
