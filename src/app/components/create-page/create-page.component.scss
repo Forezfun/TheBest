@@ -3,14 +3,17 @@
 * {
     font-family: Rubik Mono One;
 }
-.createModule{
-    margin-top: 50px;
+
+.createModule {
     display: flex;
-    align-items: center;
     flex-direction: column;
-}
-.createCard {
+    gap: 30px;
     width: 40vw;
+    margin: 0 auto;
+}
+
+.createCard {
+    width: 100%;
     height: 25vw;
     border-radius: 20px;
     box-shadow: $cardShadow;
@@ -39,7 +42,6 @@
 .decorations {
     display: flex;
     flex-direction: row;
-    // gap:15px;
     height: 90%;
     width: 100%;
     align-items: center;
@@ -58,6 +60,7 @@
     color: black;
     font-size: 1.25vw;
     overflow: hidden;
+    height: 6em;
 }
 
 .descriptionInput::placeholder {
@@ -68,6 +71,7 @@
     color: gray;
     font-size: 1vw;
     overflow: hidden;
+    height: 4em;
 }
 
 .chooseImgSpan {
@@ -81,32 +85,190 @@
     grid-template-rows: 1fr;
     place-items: center;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .chooseIcon {
     grid-area: 1 / 1 / 2 / 2;
-    width:25%;
+    width: 25%;
 }
 
 .choosedImg {
     grid-area: 1 / 1 / 2 / 2;
+    width:90%;
+    height: 90%;
 }
-
+.choosedImg[src=""] {
+    display: none; 
+}
 .disabled {
     display: none;
 }
 
-.submitBtn{
+.submitBtn {
     background-color: white;
     border: none;
-    color:black;
-    border-radius: 15px;
+    color: black;
     text-decoration: none;
     display: block;
     text-align: center;
-    box-shadow: $cardShadow;
     align-content: center;
-    width:17vw;
-    height: 7vh;
+    width: 100%;
+    font-size: 1.25vw;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.nameAddSpan {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.nameAddModule {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: space-between;
+}
+
+.namesModule {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.chooseElements {
+    box-shadow: $cardShadow;
+    border-radius: 15px;
+    height: 10vh;
+}
+
+.inputName {
+    border: none;
+    outline: none;
+    text-align: center;
     font-size: 1vw;
+    width: 35%;
+}
+
+.inputName::placeholder {
+    color: black;
+
+}
+
+.chooseFunctions {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 100%;
+    place-items: center;
+    width: 65%;
+}
+
+.chooseDescription {
+    text-align: center;
+    font-size: 1.125vw;
+}
+
+.helpInformation {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    grid-area: 1/1/2/2;
+}
+
+.pageAddInput {
+    
+}
+.fileInput{
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    cursor: pointer;
+    grid-area: 1/1/2/2;
+    z-index: 3;
+}
+.imageAddInput{
+
+}
+.addInput::-webkit-file-upload-button {
+    display: none;
+}
+
+.addIcon {
+    height: 50%;
+    grid-area: 1/1/2/2;
+}
+
+textarea {
+    background-color: transparent;
+    resize: none;
+}
+
+@media (max-width:1024px) {
+    .createModule {
+        width:50vw;
+    }
+    .createModule * {
+        font-size: 1.5vw;
+    }
+    .createCard {
+        height: 30vw;
+    }
+}
+@media (max-width:768px) {
+    .createModule {
+        width:60vw;
+    }
+    .createModule * {
+        font-size: 2vw;
+    }
+    .createCard {
+        height: 40vw;
+    }
+}
+@media (max-width:550px) {
+.createModule{
+    width:90vw;
+
+}
+.createCard{
+    height: 70vw;
+    box-shadow: none;
+}
+.createCard *{
+    font-size: 3.5vw;
+}
+.namesModule *{
+    font-size: 3vw;
+}
+.chooseImgSpan{
+    width:calc(100% - 4.8px);
+    border-radius:15px;
+    height: calc(20% - 4.8px);
+}
+.descriptionInput{
+    margin-top: 10px;
+}
+.decorations{
+    flex-direction: column;
+}
+.cardDescriptionSpan{
+    align-self: flex-start;
+}
+.chooseIcon{
+    height: 90%;
+    width: 8%;
+}
+.chooseElements{
+    height: 8vh;
+}
+.choosedImg{
+    display: none;
+}
 }

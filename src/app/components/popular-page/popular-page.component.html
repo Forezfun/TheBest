@@ -1,4 +1,8 @@
 <app-navigation-panel></app-navigation-panel>
+<span class="finder">
+    <input class="inputFinder" placeholder="Найти.." type="text">
+    <img class="iconFinder" src="assets/images/iconFind.svg" (click)="findPublications()" alt="Искать">
+</span>
 <span class="cards" >
     <span *ngFor="let cardInformation of exampleCardsArray" class="popularCard">
         <h1 class="title">{{cardInformation.title}}</h1>
