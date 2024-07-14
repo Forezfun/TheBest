@@ -29,5 +29,6 @@ export class PopularPageComponent {
       imgLink: 'windows.png'
     }
   ]
+  
   findPublications() { }
 }

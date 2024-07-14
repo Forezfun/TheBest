@@ -5,15 +5,15 @@
 }
 
 .createModule {
-    margin-top: 50px;
     display: flex;
-    align-items: center;
     flex-direction: column;
     gap: 30px;
+    width: 40vw;
+    margin: 0 auto;
 }
 
 .createCard {
-    width: 40vw;
+    width: 100%;
     height: 25vw;
     border-radius: 20px;
     box-shadow: $cardShadow;
@@ -85,6 +85,7 @@
     grid-template-rows: 1fr;
     place-items: center;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .chooseIcon {
@@ -94,8 +95,12 @@
 
 .choosedImg {
     grid-area: 1 / 1 / 2 / 2;
+    width:90%;
+    height: 90%;
 }
-
+.choosedImg[src=""] {
+    display: none; 
+}
 .disabled {
     display: none;
 }
@@ -111,12 +116,14 @@
     width: 100%;
     font-size: 1.25vw;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .nameAddSpan {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    margin-bottom: 30px;
 }
 
 .nameAddModule {
@@ -127,10 +134,11 @@
 }
 
 .namesModule {
-    width: 40vw;
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 20px;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .chooseElements {
@@ -173,18 +181,25 @@
     justify-content: space-around;
     grid-area: 1/1/2/2;
 }
-.addInput {
+
+.pageAddInput {
+    
+}
+.fileInput{
     height: 100%;
     width: 100%;
-    z-index: 3;
-    position: relative;
-    grid-area: 1/1/2/2;
     opacity: 0;
     cursor: pointer;
+    grid-area: 1/1/2/2;
+    z-index: 3;
 }
-.addInput::-webkit-file-upload-button{
+.imageAddInput{
+
+}
+.addInput::-webkit-file-upload-button {
     display: none;
 }
+
 .addIcon {
     height: 50%;
     grid-area: 1/1/2/2;
@@ -193,4 +208,67 @@
 textarea {
     background-color: transparent;
     resize: none;
+}
+
+@media (max-width:1024px) {
+    .createModule {
+        width:50vw;
+    }
+    .createModule * {
+        font-size: 1.5vw;
+    }
+    .createCard {
+        height: 30vw;
+    }
+}
+@media (max-width:768px) {
+    .createModule {
+        width:60vw;
+    }
+    .createModule * {
+        font-size: 2vw;
+    }
+    .createCard {
+        height: 40vw;
+    }
+}
+@media (max-width:550px) {
+.createModule{
+    width:90vw;
+
+}
+.createCard{
+    height: 70vw;
+    box-shadow: none;
+}
+.createCard *{
+    font-size: 3.5vw;
+}
+.namesModule *{
+    font-size: 3vw;
+}
+.chooseImgSpan{
+    width:calc(100% - 4.8px);
+    border-radius:15px;
+    height: calc(20% - 4.8px);
+}
+.descriptionInput{
+    margin-top: 10px;
+}
+.decorations{
+    flex-direction: column;
+}
+.cardDescriptionSpan{
+    align-self: flex-start;
+}
+.chooseIcon{
+    height: 90%;
+    width: 8%;
+}
+.chooseElements{
+    height: 8vh;
+}
+.choosedImg{
+    display: none;
+}
 }

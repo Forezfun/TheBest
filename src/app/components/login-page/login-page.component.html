@@ -1,82 +1,81 @@
 <app-navigation-panel></app-navigation-panel>
-<img src="assets/images/ipad.png" alt=":3" class="ipad decorationObject">
+<img src="assets/images/ipad.png" alt=":3" class="ipad decorationObject" />
 <span class="loginSpan">
-    <h2 class="loginTitle">SIGN IN</h2>
-        <ng-container *ngTemplateOutlet="currentTemplate"></ng-container>
-    <img class="loginGoogle" src="assets/images/googleIcon.svg" alt=":3">
+  <h2 class="loginTitle">SIGN IN</h2>
+  <ng-container *ngTemplateOutlet="currentTemplate"></ng-container>
+  <img class="loginGoogle" src="assets/images/googleIcon.svg" alt=":3" />
 </span>
-<img src="assets/images/iphone15.png" alt=":3" class="iphone decorationObject">
-
+<img src="assets/images/iphone15.png" alt=":3" class="iphone decorationObject" />
 <ng-template #login>
-    <form class="form" [formGroup]="loginForm" (ngSubmit)="loginUser()">
-        <span class="loginFields">
-            <div>
-                <div class="horizontalSpan">
-                    <label for="email" class="titleField">E-MAIL</label>
-                    <input required type="text" id="email" formControlName="email" class="inputField">
-                </div>
-                <hr>
-            </div>
-            <div>
-                <div class="horizontalSpan">
-                    <label for="password" class="titleField">PASSWORD</label>
-                    <input required type="text" id="password" formControlName="password" class="inputField">
-                </div>
-                <hr>
-            </div>
-        </span>
-        <u class="resetPassword" (click)="changeTemplate('forgot')">I FORGOT PASSWORD</u>
-        <button class="btnSubmit" type="submit">LOGIN</button>
-    </form>
+  <form class="form" [formGroup]="loginForm" (ngSubmit)="loginUser()">
+    <span class="loginFields">
+      <div>
+        <div class="horizontalSpan">
+          <label for="email" class="titleField">E-MAIL</label>
+          <input required type="text" id="email" formControlName="email" class="inputField" />
+        </div>
+        <hr/>
+      </div>
+      <div>
+        <div class="horizontalSpan">
+          <label for="password" class="titleField">PASSWORD</label>
+          <input required type="text" id="password" formControlName="password" class="inputField" />
+        </div>
+        <hr/>
+      </div>
+    </span>
+    <u class="resetPassword" (click)="changeTemplate('email')">I FORGOT PASSWORD</u>
+    <button class="btnSubmit" type="submit">LOGIN</button>
+  </form>
 </ng-template>
 
 <ng-template #enterEmail>
-    <form class="form" [formGroup]="loginForm" (ngSubmit)="changeTemplate('code')">
-        <div>
-            <div class="horizontalSpan">
-                <label for="email" class="titleField">E-MAIL</label>
-                <input required type="text" id="email" formControlName="email" class="inputField">
-            </div>
-            <hr>
-        </div>
-        <u class="resetPassword" (click)="changeTemplate('login')">I KNOW MY PASSWORD</u>
-        <button class="btnSubmit" type="submit">REQUEST</button>
-    </form>
+  <form class="form" [formGroup]="loginForm" (ngSubmit)="changeTemplate('code')">
+    <div>
+      <div class="horizontalSpan">
+        <label for="email" class="titleField">E-MAIL</label>
+        <input required type="text" id="email" formControlName="email" class="inputField" />
+      </div>
+      <hr />
+    </div>
+    <u class="resetPassword" (click)="changeTemplate('login')">I KNOW MY PASSWORD</u>
+    <button class="btnSubmit" type="submit">REQUEST</button>
+  </form>
 </ng-template>
 
 <ng-template #enterCode>
-    <form class="form" [formGroup]="loginForm" (ngSubmit)="changeTemplate('reset')">
-            <div class="verticalSpan">
-                <label for="code" class="titleField">CODE</label>
-                <input required autocomplete="off" type="text" id="code" formControlName="code" class="inputFieldCode">
-            </div>
-        <div class="resetNavigation">
-            <u class="resetPassword" (click)="changeTemplate('login')">I KNOW</u>
-            <u class="resetPassword" (click)="changeTemplate('forgot')">RETRY</u>
-            </div>
-        <button class="btnSubmit" type="submit">ENTER</button>
-    </form>
+  <form class="form" [formGroup]="loginForm" (ngSubmit)="changeTemplate('reset')">
+    <div class="verticalSpan">
+      <label for="code" class="titleField">CODE</label>
+      <input required autocomplete="off" type="text" id="code" formControlName="code" class="inputFieldCode" />
+    </div>
+    <div class="resetNavigation">
+      <u class="resetPassword" (click)="changeTemplate('login')">I KNOW</u>
+      <u class="resetPassword" (click)="changeTemplate('email')">RETRY</u>
+    </div>
+    <button class="btnSubmit" type="submit">ENTER</button>
+  </form>
 </ng-template>
 
 <ng-template #resetPassword>
-    <form class="form" [formGroup]="loginForm" (ngSubmit)="changeTemplate('login')">
-        <span class="loginFields">
-            <div>
-                <div class="horizontalSpan">
-                    <label for="resetPassword" class="titleField">PASSWORD</label>
-                    <input required type="text" id="resetPassword" formControlName="resetPassword" class="inputField">
-                </div>
-                <hr>
-            </div>
-            <div>
-                <div class="horizontalSpan">
-                    <label for="check" class="titleField">CHECK</label>
-                    <input required type="text" id="check" formControlName="resetPasswordCheck" class="inputField">
-                </div>
-                <hr>
-            </div>
-        </span>
-        <u class="resetPassword" (click)="changeTemplate('login')">I KNOW PASSWORD</u>
-        <button class="btnSubmit" type="submit">RESET</button>
-    </form>
+  <form class="form" [formGroup]="loginForm" (ngSubmit)="changeTemplate('login')">
+    <span class="loginFields">
+      <div>
+        <div class="horizontalSpan">
+          <label for="resetPassword" class="titleField">PASSWORD</label>
+          <input required type="text" id="resetPassword" formControlName="resetPassword" class="inputField" />
+        </div>
+        <hr />
+      </div>
+      <div>
+        <div class="horizontalSpan">
+          <label for="check" class="titleField">CHECK</label>
+          <input required type="text" id="check" formControlName="resetPasswordCheck" class="inputField" />
+        </div>
+        <hr />
+      </div>
+    </span>
+    <u class="resetPassword" (click)="changeTemplate('login')">I KNOW PASSWORD</u>
+    <button class="btnSubmit" type="submit">RESET</button>
+  </form>
 </ng-template>

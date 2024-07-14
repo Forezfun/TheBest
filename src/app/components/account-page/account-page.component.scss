@@ -1,136 +1,194 @@
-@import '../../../styles.scss';
+    @import '../../../styles.scss';
+    $templateWidth:40vw;
+    * {
+        font-family: Rubik Mono One;
+    }
+    .accountTemplate{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    .block {
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: $cardShadow;
+        border: none;
+    }
 
-* {
-    font-family: Rubik Mono One;
-}
+    .switcherSpan {
+        display: flex;
+        gap: 15px;
+        width: $templateWidth;
+        height: 7vh;
+        gap:15px;
+        justify-content: center;
+    }
 
-.accountCard {
-    display: flex;
-    flex-direction: row;
-    width: 75vw;
-    height: 50vh;
-    margin: 0 auto;
-    margin-top: 50px;
-    justify-content: space-around;
-}
+    .switcher {
+        width: 50%;
+        cursor: pointer;
+    }
+    .accountCardTemplate {
+    }
+    .projectTemplate{
 
-.accountInformation {
-    padding: 15px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    box-shadow: $cardShadow;
-    border-radius: 15px;
-    width: 60%;
-    justify-content: space-evenly;
-    align-items: center;
-}
+    }
+    .mainTemplate{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        width:$templateWidth;
+        height: 40vh;
+        gap:20px;
+    }
+    .propertyBlock{
+        display: flex;
+        align-items: center;
+        gap:15px;
+    }
+    .accountInformationTitle{
+        text-align: center;
+        cursor: default;
+    }
+    .informationTitle,.accountInformationTitle,.informationArea{
+        margin: 0;
+    }
+    .informationTemplate{
+        width:80%;
+        display: flex;
+        justify-content: space-between;
+        margin: 0 auto;
+    }
+    .accountData{
+        display: flex;
+        flex-direction: column;
+        gap:15px;
+    }
+    .informationArea{
+        color:gray;
+    }
+    .accountsProjects{
+        width:40vw;
+        display: flex;
+        flex-direction: column;
+        gap:15px;
+        width:80%;
+        margin: 0 auto;
+    }
+    .accountProject{
+        display: flex;
+        align-items: center;
+        color:black;
+        text-decoration: none;
+        gap:15px;
+        width: 100%;
+        justify-content: space-between;
+    }
+    .userProjectTitle{
+        margin:0;
+    }
 
-.accountImageCard {
-    border-radius: 100%;
-    box-shadow: $cardShadow;
-    width: 15vw;
-    height: 15vw;
-    display: grid;
-    justify-items: center;
-    align-items: end;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-}
-
-.addIcon {
-    grid-area: 1/1/2/2;
-    width: 25%;
-    height: 25%;
-    z-index: 3;
-}
-
-.accountPhoto {
-    grid-area: 1/1/2/2;
-    border-radius: 100%;
-    z-index: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.accountData {
-    height: 30%;
-    width: 70%;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.functionalIcon {
-    width: 25px;
-    height: 25px;
-    cursor: pointer;
-}
-.editIcon{
-width:20px;
-height:20px;
-cursor: pointer;
-}
-.informationTitle {
-    margin: 0;
-    font-size: 1.25vw;
-    font-weight: 400;
-}
-
-.informationArea {
-    margin: 0;
-    font-weight: 400;
-}
-
-.accountsProjects {
-    box-shadow: $cardShadow;
-    padding-top: 30px;
-    padding-left: 30px;
-    height: calc(100% - 30px);
-    width: calc(30% - 30px);
-    border-radius: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.accountProject {
-    color: black;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 15px;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.userProjectTitle {
-    margin: 0;
-    font-size: 1.125vw;
-}
-
-.Input {
-    border: none;
-    outline: none;
-    background-color: transparent;
-    font-size: 1vw;
-}
-
-.changeInformationBlock {
-    display: flex;
-    justify-content: space-between;
-}
-
-.templateSpan {
-    display: flex;
-    justify-content: space-between;
-    width: 75%;
-}
-
-.propertyBlock {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-    font-size: 1vw;
-}
+    .Input{
+        border: none;
+        outline: none;
+        color:gray;
+        background-color: transparent;
+        width: 100%;
+        padding: 0;
+    }
+    .functionalIcon{
+        width:20px;
+        height: 20px;
+        cursor: pointer;
+    }
+    .functionalsBtns{
+        display: flex;
+        gap:5px;
+    }
+    .propertyBlock *,.accountProject *, .switcher{
+        font-size: 1.25vw;
+        font-weight: 450;
+    }
+    .slideDisappearAnimation{
+        animation: slideBlockDisappear 0.2s forwards;
+    }
+    .slideAppearAnimation{
+        animation: slideBlockAppear 0.3s ease-out forwards;
+    }
+    .opacityAnimation{
+        animation: opacityAnimation 1s forwards;
+    }
+    @keyframes slideBlockDisappear {
+        100% {
+            margin-right: -$templateWidth;
+            opacity: 0;
+        }
+    }
+    @keyframes slideBlockAppear {
+        0% {
+            margin-right: $templateWidth;
+            opacity: 0;
+        }
+        100% {
+            margin-right: 0;
+            opacity: 1;
+        }
+    }
+    @keyframes opacityAnimation {
+        0% {
+            opacity: 1;
+        }
+        40% {
+            opacity: 0;
+        }
+        60% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+    @media (max-width:1024px) {
+        $templateWidth:45vw;
+        .switcherSpan{
+            height: 8vh;
+            width:$templateWidth;
+        }
+        .mainTemplate{
+            height: 45vh;
+            width:$templateWidth;
+        }
+        .propertyBlock *,.accountProject *, .switcher{
+            font-size: 1.5vw;
+        }
+    }
+    @media (max-width:768px) {
+        $templateWidth:60vw;
+        .switcherSpan{
+            width:$templateWidth;
+        }
+        .mainTemplate{  
+            width:$templateWidth;
+            height: 40vh;
+        }
+        .propertyBlock *,.accountProject *, .switcher{
+            font-size: 2vw;
+        }
+        .informationTemplate{
+            width:90%;
+        }
+    }
+    @media (max-width:550px) {
+        $templateWidth:90vw;
+        .switcherSpan{
+            width:$templateWidth;
+        }
+        .mainTemplate{  
+            width:$templateWidth;
+            height: 35vh;
+        }
+        .propertyBlock *,.accountProject *, .switcher{
+            font-size: 3.5vw;
+        }
+    }
