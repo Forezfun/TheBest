@@ -1,0 +1,17 @@
+<app-navigation-panel></app-navigation-panel>
+<span class="finder">
+    <input class="inputFinder" placeholder="Найти.." type="text">
+    <img class="iconFinder" src="/assets/images/iconFind.svg" (click)="findPublications()" alt="Искать">
+</span>
+<span class="cards" >
+    <span *ngFor="let cardInformation of PopularCardsArray" class="popularCard">
+        <h2 class="title">{{cardInformation.title}}</h2>
+        <span class="decorations">
+            <span class="cardDescriptionSpan">
+                <h3 class="cardDescription">{{cardInformation.description}}</h3>
+                <h3 class="cardsubDescription">{{cardInformation.subDescription}}</h3>
+            </span>
+            <img class="image" [src]="cardInformation.decorationImageUrl" alt=":3">
+        </span>
+    </span>
+</span>

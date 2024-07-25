@@ -1,0 +1,113 @@
+<app-navigation-panel></app-navigation-panel>
+<img src="/assets/images/ipad.png" alt=":3" style="display: none;" class="ipad decorationObject" />
+<span class="loginSpan">
+  <h2 class="loginTitle">SIGN IN</h2>
+  <ng-container *ngTemplateOutlet="currentTemplate"></ng-container>
+  <img class="loginGoogle" src="/assets/images/googleIcon.svg" alt=":3" />
+  <div class="errorScreen">{{userError}}</div>
+</span>
+<img src="/assets/images/iphone15.png" alt=":3" class="iphone decorationObject" />
+<ng-template #login>
+  <form class="form" [formGroup]="loginForm" (ngSubmit)="loginUser()">
+    <span class="loginFields">
+      <div>
+        <div class="horizontalSpan">
+          <label for="email" class="titleField">E-MAIL</label>
+          <input (keydown)="preventSpace($event)" type="email" id="email" formControlName="email" class="inputField" />
+        </div>
+        <hr />
+      </div>
+      <div>
+        <div class="horizontalSpan">
+          <label for="password" class="titleField">PASSWORD</label>
+          <input (keydown)="preventSpace($event)" type="password" id="password" formControlName="password" class="inputField" />
+        </div>
+        <hr />
+      </div>
+    </span>
+    <div class="changeTemplateNavigation">
+      <u class="changeTemplateBtn" (click)="changeTemplate('registrate')">REGISTRATE</u>
+      <u class="changeTemplateBtn" (click)="changeTemplate('email')">I FORGOT PASSWORD</u>
+    </div>
+    <button [disabled]="!loginForm.valid" class="btnSubmit" type="submit">LOGIN</button>
+  </form>
+</ng-template>
+<ng-template #registration>
+  <form class="form" [formGroup]="registrationForm" (ngSubmit)="registrateUser()">
+    <span class="loginFields">
+      <div>
+      <div class="horizontalSpan">
+        <label for="email" class="titleField">E-MAIL</label>
+        <input (keydown)="preventSpace($event)" pattern="^[^\s]+(\s.*)?$" type="email" id="email" required formControlName="email" class="inputField" />
+      </div>
+      <hr />
+      </div>
+      <div>
+      <div class="horizontalSpan">
+        <label for="password" class="titleField">PASSWORD</label>
+        <input (keydown)="preventSpace($event)" type="password" id="password" formControlName="password" class="inputField" />
+      </div>
+      <hr />
+      </div>
+      <div>
+        <div class="horizontalSpan">
+          <label for="nickname" class="titleField">NICKNAME</label>
+          <input (keydown)="preventSpace($event)" type="text" id="nickname" formControlName="nickname" class="inputField" />
+        </div>
+        <hr />
+        </div>
+    </span>
+      <u class="changeTemplateBtn" (click)="changeTemplate('login')">LOGIN</u>
+    <button [disabled]="!registrationForm.valid" class="btnSubmit" type="submit">REGISTRATE</button>
+  </form>
+</ng-template>
+<ng-template #enterEmail>
+  <form class="form" [formGroup]="enterEmailForm" (ngSubmit)="requestResetCode()">
+    <div>
+    <div class="horizontalSpan">
+      <label for="email" class="titleField">E-MAIL</label>
+      <input (keydown)="preventSpace($event)" type="email" id="email" formControlName="email" class="inputField" />
+    </div>
+    <hr />
+    </div>
+    <u class="changeTemplateBtn" (click)="changeTemplate('login')">I KNOW MY PASSWORD</u>
+    <button [disabled]="!enterEmailForm.valid" class="btnSubmit" type="submit">REQUEST</button>
+  </form>
+</ng-template>
+
+<ng-template #enterCode>
+  <form class="form" [formGroup]="enterCodeForm" (ngSubmit)="matchCode()">
+    <div class="verticalSpan">
+      <label for="code" class="titleField">CODE</label>
+      <input (keydown)="preventSpace($event)" maxlength="6" type="text" id="code" formControlName="code" class="inputFieldCode" />
+    </div>
+    <div class="changeTemplateNavigation">
+      <u class="changeTemplateBtn" (click)="changeTemplate('login')">I KNOW</u>
+      <u class="changeTemplateBtn" (click)="changeTemplate('email')">RETRY</u>
+    </div>
+    <button [disabled]="!enterCodeForm.valid" class="btnSubmit" type="submit">ENTER</button>
+  </form>
+</ng-template>
+
+<ng-template #resetPassword>
+  <form class="form" [formGroup]="resetPasswordForm" (ngSubmit)="resetUserPassword()">
+    <span class="loginFields">
+      <div>
+        <div class="horizontalSpan">
+          <label for="resetPassword" class="titleField">PASSWORD</label>
+          <input (keydown)="preventSpace($event)" type="password" id="resetPassword" formControlName="resetPassword" class="inputField" />
+        </div>
+        <hr />
+      </div>
+      <div>
+        <div class="horizontalSpan">
+          <label for="check" class="titleField">CHECK</label>
+          <input (keydown)="preventSpace($event)" type="password" id="check" formControlName="resetPasswordCheck" class="inputField" />
+        </div>
+        <hr />
+      </div>
+    </span>
+    <u class="changeTemplateBtn" (click)="changeTemplate('login')">I KNOW PASSWORD</u>
+    <button [disabled]="!resetPasswordForm.valid" class="btnSubmit" type="submit">RESET</button>
+  </form>
+</ng-template>

@@ -1,0 +1,32 @@
+<app-navigation-panel></app-navigation-panel>
+<span class="example">
+    <app-dots-bar (iphoneIdEmitter)="changeIphoneId($event)" [dotsArray]="dotsNamesArray"></app-dots-bar>
+    <div #informationCard class="informationExample">
+        <div class="descriptionExample">
+            <h1 class="descriptionPropertiesExample">Прочитайте историю всей серии продукта и посмотрите
+                характеристики
+            </h1>
+            <div class="spanPropertiesExample">
+                <img class="imagePropertiesExample rotateAnimation" src="/assets/images/settingsIcon.svg" alt=":3">
+                <h3>Характеристики:</h3>
+            </div>
+            <h3 class="propertiesInformation">Озу: {{informationIphonesExampleArray[currentIphoneId+10].Ram}} <br>
+                Аккумулятор:
+                {{informationIphonesExampleArray[currentIphoneId+10].Acc}} <br> Камера:
+                {{informationIphonesExampleArray[currentIphoneId+10].Cam}}</h3>
+        </div>
+        <img [src]="'/assets/images/iphone'+(currentIphoneId+10)+'.png'" lazyload alt=":3" class="photoExample">
+    </div>
+</span>
+<a href="top" class="popularBtn someBtn">ПОПУЛЯРНОЕ</a>
+<h1 class="historyTitle">Создайте историю</h1>
+<span class="exampleCard">
+    <h3 class="historyExample">iPhone был представлен компанией Apple в 2007 году, став революционным моментом в
+        мире мобильных технологий благодаря своему мультитач-интерфейсу и широким возможностям приложений.</h3>
+    <span class="historyInformationExample">
+        <h2 class="desctipionHistoryInformationExample">Составьте историю продукта
+            и стилизуйте пост</h2>
+        <h3 class="subDesctipionHistoryInformationExample">Обозначьте характерстики продукта</h3>
+        <a href="create" class="createBtn someBtn">НАЧНИТЕ СЕЙЧАС</a>
+    </span>
+</span>

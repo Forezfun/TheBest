@@ -1,0 +1,242 @@
+@import "styles.scss";
+$templateWidth: 40vw;
+
+* {
+    font-family: $fontFamily;
+}
+
+.accountTemplate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.block {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: $cardShadow;
+    border: none;
+}
+
+.switcherSpan {
+    display: flex;
+    gap: 15px;
+    width: $templateWidth;
+    height: 7vh;
+    gap: 15px;
+    justify-content: center;
+}
+
+.switcher {
+    width: 50%;
+    cursor: pointer;
+}
+
+.accountCardTemplate {}
+
+.projectTemplate {}
+
+.mainTemplate {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    width: $templateWidth;
+    height: 40vh;
+    gap: 20px;
+}
+
+.propertyBlock {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.accountInformationTitle {
+    text-align: center;
+    cursor: default;
+}
+
+.informationTitle,
+.accountInformationTitle,
+.informationArea {
+    margin: 0;
+}
+
+.informationTemplate {
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+}
+
+.accountData {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.informationArea {
+    color: gray;
+}
+
+.accountsProjects {
+    width: 40vw;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 80%;
+    margin: 0 auto;
+}
+
+.accountProject {
+    display: flex;
+    align-items: center;
+    color: black;
+    text-decoration: none;
+    gap: 15px;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.userProjectTitle {
+    margin: 0;
+}
+
+.Input {
+    border: none;
+    outline: none;
+    color: gray;
+    background-color: transparent;
+    width: 100%;
+    padding: 0;
+}
+
+.functionalIcon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.functionalsBtns {
+    display: flex;
+    gap: 5px;
+}
+
+.propertyBlock *,
+.accountProject *,
+.switcher {
+    font-size: 1.25vw;
+    font-weight: 450;
+}
+
+.slideDisappearAnimation {
+    animation: slideBlockDisappear 0.2s forwards;
+}
+
+.slideAppearAnimation {
+    animation: slideBlockAppear 0.3s ease-out forwards;
+}
+
+.opacityAnimation {
+    animation: opacityAnimation 1s forwards;
+}
+
+@keyframes slideBlockDisappear {
+    100% {
+        margin-right: -$templateWidth;
+        opacity: 0;
+    }
+}
+
+@keyframes slideBlockAppear {
+    0% {
+        margin-right: $templateWidth;
+        opacity: 0;
+    }
+
+    100% {
+        margin-right: 0;
+        opacity: 1;
+    }
+}
+
+@keyframes opacityAnimation {
+    0% {
+        opacity: 1;
+    }
+
+    40% {
+        opacity: 0;
+    }
+
+    60% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@media (max-width:1024px) {
+    $templateWidth: 45vw;
+
+    .switcherSpan {
+        height: 8vh;
+        width: $templateWidth;
+    }
+
+    .mainTemplate {
+        height: 45vh;
+        width: $templateWidth;
+    }
+
+    .propertyBlock *,
+    .accountProject *,
+    .switcher {
+        font-size: 1.5vw;
+    }
+}
+
+@media (max-width:768px) {
+    $templateWidth: 60vw;
+
+    .switcherSpan {
+        width: $templateWidth;
+    }
+
+    .mainTemplate {
+        width: $templateWidth;
+        height: 40vh;
+    }
+
+    .propertyBlock *,
+    .accountProject *,
+    .switcher {
+        font-size: 2vw;
+    }
+
+    .informationTemplate {
+        width: 90%;
+    }
+}
+
+@media (max-width:550px) {
+    $templateWidth: 90vw;
+
+    .switcherSpan {
+        width: $templateWidth;
+    }
+
+    .mainTemplate {
+        width: $templateWidth;
+        height: 35vh;
+    }
+
+    .propertyBlock *,
+    .accountProject *,
+    .switcher {
+        font-size: 3.5vw;
+    }
+}

@@ -1,0 +1,51 @@
+<app-navigation-panel></app-navigation-panel>
+<div style="cursor:pointer" (click)="getAll()">GetAll</div>
+<div style="cursor:pointer" (click)="getOne()">GetOne</div>
+<div style="cursor:pointer" (click)="putOne()">Put</div>
+<div style="cursor:pointer" (click)="deleteOne()">Delete</div>
+<div (click)="consoleLog()">console.log</div>
+<form [formGroup]="createForm" (ngSubmit)="onSumbit()" class="createModule">
+    <span class="createCard">
+        <input maxlength="20" (input)="input($event)"  formControlName="title" type="text" placeholder="Заголовок"
+            class="titleInput input" />
+        <span class="decorations">
+            <span class="cardDescriptionSpan">
+                <textarea  formControlName="description" maxlength="50" placeholder="Описание статьи"
+                    class="descriptionInput input" type="text"></textarea>
+                <textarea  formControlName="subDescription" maxlength="30" placeholder="Дополнение"
+                    class="subDescriptionInput input" type="text"></textarea>
+            </span>
+            <span class="chooseImgSpan">
+                <input (change)="onPreviewFileSelect($event)"  formControlName="decorationImageUrl" type="file"
+                    class="imageAddInput" accept=".png,.jpeg,.jpg">
+                <img class="chooseImageIcon" src="/assets/images/addIcon.svg" alt="choose image" />
+                <img src='' class="choosedImg" />
+            </span>
+        </span>
+    </span>
+    <span  class="namesModule">
+        <button type="submit" [disabled]="!createForm.valid" class="submitBtn chooseElements">{{typePublicationEdit}}</button>
+        <span class="nameAddSpan">
+            <div *ngFor="let page of createForm.value.nameAddModulesArray;let indexOfElementInList=index" (input)="inputsChangeForAddModule($event.target!)" class="nameAddModule">
+                <input [value]="page.namePage" type="text" maxlength="10" class="inputName chooseElements"
+                    [placeholder]="'Название №'+(indexOfElementInList+1)">
+                <span (click)="openEditorWithContent($event.target!)" [attr.data-idInputs]="indexOfElementInList"
+                    class="chooseFunctions chooseElements">
+                    <h2 style="pointer-events:none" class="chooseDescription">Основной текст</h2>
+                    <img style="pointer-events:none" class="addIcon" src="/assets/images/addIcon.svg" alt=":3">
+                </span>
+            </div>
+        </span>
+    </span>
+</form>
+<ng-template let-indexOfElementInList="indexOfElementInList" #addNameModuleTemplate>
+
+</ng-template>
+<span class="editorContainer disabled">
+    <div class="functionalsEditorsBtns">
+        <img src="/assets/images/acceptIcon.png" alt="accept" (click)="acceptUserPublication()" class="editorIcon">
+        <img src="/assets/images/cancelIcon.svg" alt="close" (click)="closeEditorPagePublication()"
+            class="editorIcon">
+    </div>
+    <editor #tinyEditor [apiKey]="editorApiKey" [init]="editorInitObject"/>
+</span>

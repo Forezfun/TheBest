@@ -1,0 +1,181 @@
+@import "styles.scss";
+
+* {
+    font-family: $fontFamily;
+}
+
+.cards {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+    margin: 0 auto ;
+    margin-bottom: 30px;
+    width: 50vw;
+}
+
+.popularCard {
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+    width: 100%;
+    height: 45vh;
+    border-radius: 20px;
+    box-shadow: $cardShadow;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+.title {
+    text-align: center;
+    margin-top: 5%;
+    height: 25%;
+    font-size: clamp(30px,2.25vw,60px)
+}
+
+.decorations {
+    display: flex;
+    justify-content: center;
+    height: 75%;
+}
+
+.cardDescriptionSpan {
+    display: flex;
+    width: 50%;
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+    margin-left: 30px;
+    font-size: clamp(16px,1.4vw,25px)
+}
+
+.cardDescription * {
+    font-size: 0.7em;
+}
+
+.cardsubDescription {
+    color: gray;
+}
+
+.image {
+    max-height: 90%;
+    width: 50%;
+    align-self: flex-end;
+}
+
+.finder {
+    padding: 10px;
+    width: calc(50vw - 20px);
+    height: calc(6vh - 20px);
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+    gap: 10px;
+    box-shadow: $cardShadow;
+    background-color: white;
+    border: none;
+    border-radius: 15px;
+    margin: 0 auto;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.inputFinder {
+    border: none;
+    background: none;
+    outline: none;
+    height: 100%;
+    width: 60%;
+    font-size: clamp(15px,1.5vw,22.5px);
+    color:gray;
+}
+
+.iconFinder {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width:1024px) {
+    .cards{
+        width: clamp(550px,60vw,800px);
+    }
+    .finder{
+        width:calc(clamp(550px,60vw,800px) - 30px);
+    }
+    
+}
+@media (max-width:768px){
+    .popularCard{
+        height: clamp(250px,35vh,450px);
+    }
+    .cards{
+        width:70vw;
+    }
+    .finder{
+        width:calc(70vw - 30px);
+    }
+    .title{
+        font-size: 3vw;
+    }
+    .cardDescriptionSpan{
+        font-size: 2vw;
+    }
+}
+@media (max-width:550px) {
+    .cards{
+        width:80vw;
+    }
+    .popularCard{
+        background:none;
+        box-shadow: none;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+        justify-content: center;
+        height: 45vh;
+    }
+    .finder{
+        padding: 10px;
+        width:calc(80vw - 20px);
+        height: calc(5vh - 20px);
+    }
+
+    .title{
+        grid-area: 1/1/2/2;
+        align-self: flex-start;
+        z-index: 1;
+        font-size: 5vw;
+    }
+    .decorations{
+        grid-area: 1/1/2/2;
+        align-self: center;
+        display: grid;
+        place-items:center ;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+    }
+    .image{
+        grid-area: 1/1/2/2;
+        z-index:0;
+        width: 100%;
+        max-width: none;
+        max-height: none;
+    }
+    .cardDescription{
+        height: 30%;
+    }
+    .cardDescriptionSpan{
+        font-size: 3vw;
+        grid-area: 1/1/2/2;
+        z-index: 1;
+        border-radius: 15px;
+        background-color: white;
+        padding: 15px;
+        width:calc(85% - 30px);
+        box-shadow: $cardShadow;
+        margin-left: 0;
+    }
+}
