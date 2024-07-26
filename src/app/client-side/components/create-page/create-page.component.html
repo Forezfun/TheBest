@@ -4,7 +4,7 @@
 <div style="cursor:pointer" (click)="putOne()">Put</div>
 <div style="cursor:pointer" (click)="deleteOne()">Delete</div>
 <div (click)="consoleLog()">console.log</div>
-<form [formGroup]="createForm" (ngSubmit)="onSumbit()" class="createModule">
+<form [formGroup]="createForm" (ngSubmit)="onSubmit()" class="createModule">
     <span class="createCard">
         <input maxlength="20" (input)="input($event)"  formControlName="title" type="text" placeholder="Заголовок"
             class="titleInput input" />
@@ -38,9 +38,6 @@
         </span>
     </span>
 </form>
-<ng-template let-indexOfElementInList="indexOfElementInList" #addNameModuleTemplate>
-
-</ng-template>
 <span class="editorContainer disabled">
     <div class="functionalsEditorsBtns">
         <img src="/assets/images/acceptIcon.png" alt="accept" (click)="acceptUserPublication()" class="editorIcon">

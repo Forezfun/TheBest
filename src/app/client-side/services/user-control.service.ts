@@ -89,13 +89,13 @@ export class UserControlService {
   }
   deleteUserInCookies() {
     this.cookieService.delete('user', '/')
-    this.router.navigate(['/login'])
+    this.router.navigateByUrl('/login')
   }
   checkLogin(reverse: boolean) {
     if (!reverse) {
-      if (this.getUserInCookies()) this.router.navigate(['/account'])
+      if (this.getUserInCookies()) this.router.navigateByUrl('/account')
       return
     }
-    if (!this.getUserInCookies()) this.router.navigate(['/login'])
+    if (!this.getUserInCookies()) this.router.navigateByUrl('/login')
   }
 }

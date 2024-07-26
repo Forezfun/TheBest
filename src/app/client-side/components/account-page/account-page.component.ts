@@ -100,7 +100,7 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
           password:USER_SERVER_DATA_OBJECT.password,
           _id:USER_SERVER_DATA_OBJECT._id
         })
-        this.router.navigate(['/login'])
+        this.router.navigateByUrl('/login')
       },
       error=>{
         console.log(error)

@@ -4,7 +4,7 @@
     <img class="iconFinder" src="/assets/images/iconFind.svg" (click)="findPublications()" alt="Искать">
 </span>
 <span class="cards" >
-    <span *ngFor="let cardInformation of PopularCardsArray" class="popularCard">
+    <span (click)="openPublication(cardInformation._id)" *ngFor="let cardInformation of PopularCardsArray" class="popularCard">
         <h2 class="title">{{cardInformation.title}}</h2>
         <span class="decorations">
             <span class="cardDescriptionSpan">

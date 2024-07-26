@@ -1,6 +1,7 @@
 import { Component, Renderer2 ,ViewChild, ElementRef} from '@angular/core';
 import { NavigationPanelComponent } from '../navigation-panel/navigation-panel.component';
 import { DotsBarComponent } from '../dots-bar/dots-bar.component';
+import { interfacePageInformation } from '../../services/publication-control.service';
 interface interfaceIphoneInformation {
   Ram: number;
   Acc: number;
@@ -28,7 +29,7 @@ export class MainPageComponent {
     14: { Ram: 6, Acc: 3095, Cam: 12, Photo: "iphone14.png" },
     15: { Ram: 8, Acc: 3095, Cam: 12, Photo: "iphone15.png" }
   };
-  dotsNamesArray: string[] = Object.keys(this.informationIphonesExampleArray)
+  dotsNamesArray: interfacePageInformation[] = Object.keys(this.informationIphonesExampleArray).map(name=>{return {namePage:name,codePage:''}})
 
   constructor(private renderer2: Renderer2) { }
   

@@ -4,7 +4,7 @@ import { FormGroup, FormControl, ReactiveFormsModule, Validators, ValidatorFn, V
 import { EditorComponent } from '@tinymce/tinymce-angular';
 import { ImageControlService } from '../../services/image-control.service';
 import { NavigationPanelComponent } from '../navigation-panel/navigation-panel.component';
-import { interfacePageInformation, interfacePublicationInformation, PublicationControlService, interfaceServerPublicationInformation } from '../../services/publication-control.service';
+import { PublicationControlService, interfacePageInformation, interfacePublicationInformation, interfaceServerPublicationInformation } from '../../services/publication-control.service';
 import { HttpClientModule } from '@angular/common/http';
 import { UserControlService } from '../../services/user-control.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -19,8 +19,6 @@ import { Subscription } from 'rxjs';
   // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('BITEnameAddSpan', { read: ViewContainerRef }) private nameAddSpanContainer!: ViewContainerRef
-  @ViewChild('addNameModuleTemplate', { read: TemplateRef }) private addNameModuleTemplate!: TemplateRef<any>
   @ViewChild('tinyEditor') tinyEditor!: EditorComponent;
   editorApiKey = "pa2wb6quye1a8vzzmn5v79fq0iwcr78l02u3tohb4401tufu"
   editorInitObject: EditorComponent['init'] = {
@@ -69,6 +67,36 @@ export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
       nameAddModulesArray: this.formBuilder.array([this.createNameModule()
       ], Validators.required)
     })
+
+    this.routerSub = this.routerSubscribe.paramMap.subscribe(params => {
+      const idPublication = params.get('id') as string
+      if (idPublication === 'new') return
+      this.publicationControlService.GETgetPublication(idPublication)
+        .subscribe(
+          resolve => {
+            this.typePublicationEdit = 'Редактировать'
+            console.log(resolve)
+            const PUBLICATION_SERVER_DATA_OBJECT = resolve as interfaceServerPublicationInformation
+            if (PUBLICATION_SERVER_DATA_OBJECT.author !== this.userControlService.getUserInCookies()!._id) {
+              this.router.navigateByUrl('/**');
+              return;
+            }
+            PUBLICATION_SERVER_DATA_OBJECT.nameAddModulesArray.push({ namePage: '', codePage: '' })
+            this.createForm.patchValue({
+              title: PUBLICATION_SERVER_DATA_OBJECT.title,
+              description: PUBLICATION_SERVER_DATA_OBJECT.description,
+              subDescription: PUBLICATION_SERVER_DATA_OBJECT.subDescription,
+            });
+            this.setNameModulesArray(PUBLICATION_SERVER_DATA_OBJECT.nameAddModulesArray);
+            console.log(this.createForm.value)
+            this.choosedImage.src = PUBLICATION_SERVER_DATA_OBJECT.decorationImageUrl
+          },
+          error => {
+            this.router.navigateByUrl('/**')
+          }
+        )
+    })
+    this.routerSub.unsubscribe()
   }
   input(input: Event) {
     console.log((input.target as HTMLInputElement).value)
@@ -85,50 +113,38 @@ export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log(this.createForm.value, 'Valid:', this.createForm.valid)
 
   }
+  setNameModulesArray(modules: interfacePageInformation[]) {
+    const modulesArray = this.createForm.get('nameAddModulesArray') as FormArray;
+    modulesArray.clear();
+    modules.forEach(module => {
+      modulesArray.push(this.formBuilder.group({
+        namePage: module.namePage,
+        codePage: module.codePage
+      }));
+    });
+    this.createForm.setControl('nameAddModulesArray', this.formBuilder.array(modules.map(module => this.formBuilder.group(module))));
+  }
   ngAfterViewInit(): void {
     this.chooseIconElement = this.elementOfComponent.nativeElement.querySelector('.chooseImageIcon') as HTMLImageElement
     this.editorHtmlElement = this.elementOfComponent.nativeElement.querySelector('editor') as HTMLDivElement
     this.choosedImage = this.elementOfComponent.nativeElement.querySelector('.choosedImg') as HTMLImageElement
-
-    this.routerSub = this.routerSubscribe.paramMap.subscribe(params => {
-      const idPublication = params.get('id') as string
-      if (idPublication === 'new') return
-      this.publicationControlService.GETgetPublication(idPublication)
-        .subscribe(
-          resolve => {
-            this.typePublicationEdit = 'Редактировать'
-            console.log(resolve)
-            const PUBLICATION_SERVER_DATA_OBJECT = resolve as interfaceServerPublicationInformation
-            this.createForm.patchValue({
-              title: PUBLICATION_SERVER_DATA_OBJECT.title,
-              description: PUBLICATION_SERVER_DATA_OBJECT.description,
-              subDescription: PUBLICATION_SERVER_DATA_OBJECT.subDescription,
-              nameAddModulesArray: PUBLICATION_SERVER_DATA_OBJECT.nameAddModulesArray
-            })
-            this.choosedImage.src = PUBLICATION_SERVER_DATA_OBJECT.decorationImageUrl
-          },
-          error => {
-            this.router.navigate(['/**'])
-          }
-        )
-    })
-    this.routerSub.unsubscribe()
     this.changeDetectorRef.detectChanges()
   }
   ngOnDestroy(): void {
 
   }
-  onSumbit() {
-    console.log(this.createForm.value)
+  onSubmit() {
+    let PUBLICATION_DATA_OBJECT = { ...this.createForm.value } as interfacePublicationInformation;
+    PUBLICATION_DATA_OBJECT.author = this.userControlService.getUserInCookies()!._id;
+    PUBLICATION_DATA_OBJECT.nameAddModulesArray = PUBLICATION_DATA_OBJECT.nameAddModulesArray.filter(page =>
+      page.namePage && page.codePage
+    );
     if (this.typePublicationEdit === 'Опубликовать') {
-      const PUBLICATION_DATA_OBJECT = this.createForm.value
-      PUBLICATION_DATA_OBJECT.author=this.userControlService.getUserInCookies()!._id
-      this.publicationControlService.POSTcreatePublication(this.createForm.value)
-    }else{
-      this.publicationControlService.PUTupdatePublication(this.routerSubscribe.snapshot.paramMap.get('id')!,this.createForm.value)
-      
+      this.publicationControlService.POSTcreatePublication(PUBLICATION_DATA_OBJECT)
+    } else {
+      this.publicationControlService.PUTupdatePublication(this.routerSubscribe.snapshot.paramMap.get('id')!, PUBLICATION_DATA_OBJECT)
     }
-    this.router.navigate(['/account'])
+    this.router.navigateByUrl('/account')
   }
   getAll() {
     this.publicationControlService.GETgetAllPublications()

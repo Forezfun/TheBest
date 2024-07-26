@@ -108,7 +108,7 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
             password: OBJECT_FOR_REQUEST.password,
             _id:USER_SERVER_DATA_OBJECT._id
           })
-          this.router.navigate(['/account']);
+          this.router.navigateByUrl('/account')
         },
         error => { console.log(error) }
       )
@@ -124,7 +124,7 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
             password: USER_SERVER_DATA_OBJECT.password,
             _id:USER_SERVER_DATA_OBJECT._id
           })
-          this.router.navigate(['/account']);
+          this.router.navigateByUrl('/account')
         },
         error => {
           console.log(error)

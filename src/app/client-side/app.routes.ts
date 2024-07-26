@@ -13,5 +13,5 @@ export const routes: Routes = [
     {path:'create/:id',component:CreatePageComponent},
     {path:'account',component:AccountPageComponent},
     {path:'publication/:id',component:PublicationPageComponent},
-    {path:'**',component:NotFoundPageComponent},
+    {path:'**',component:NotFoundPageComponent}
 ];
