@@ -1,14 +1,15 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, TemplateRef, ViewChild } from '@angular/core';
 import { NavigationPanelComponent } from '../navigation-panel/navigation-panel.component';
-import { NgFor, NgTemplateOutlet } from '@angular/common';
+import { CommonModule, NgFor, NgTemplateOutlet } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { interfaceServerUserData, interfaceUserCookie, UserControlService } from '../../services/user-control.service';
 import { Router } from '@angular/router';
-import { catchError, throwError } from 'rxjs';
+import {Observable, of } from 'rxjs';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 @Component({
   selector: 'app-account-page',
   standalone: true,
-  imports: [NavigationPanelComponent, NgFor, NgTemplateOutlet, ReactiveFormsModule],
+  imports: [NavigationPanelComponent, NgFor, NgTemplateOutlet, ReactiveFormsModule,CommonModule,NgxSpinnerModule],
   templateUrl: './account-page.component.html',
   styleUrl: './account-page.component.scss'
 })
@@ -20,48 +21,50 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
   currentInformationTemplate!: TemplateRef<any>
   currentSwitcherTemplate!: TemplateRef<any>
   changeInformationForm!: FormGroup;
-  userInformation!: interfaceServerUserData
-
+  userInformation$?: Observable<interfaceServerUserData>;
   constructor(
     private formBuilder: FormBuilder,
     private changeDetectorRef: ChangeDetectorRef,
     private renderer2: Renderer2,
     private elementOfComponent: ElementRef,
     private userControlService: UserControlService,
-    private router: Router
-  ) { 
-    this.userControlService.checkLogin(true)
-  }
-  ngAfterViewInit(): void {
-    this.currentInformationTemplate = this.informationTemplate
-    this.currentSwitcherTemplate = this.accountTemplate
-    this.changeDetectorRef.detectChanges()
-  }
+    private router: Router,
+    private spinner:NgxSpinnerService
+  ) {}
   ngOnInit(): void {
+    this.userControlService.checkLogin(true)
     this.changeInformationForm = this.formBuilder.group({
       nickname: new FormControl(''),
-      email: new FormControl(''),
       password: new FormControl('')
     })
     const userDataObject = this.userControlService.getUserInCookies()
     console.log(userDataObject)
     if(!userDataObject)return
+    this.spinner.show()
     this.userControlService.GETgetUserOnServer(userDataObject)
     .subscribe(
       resolve=>{
+        console.log(resolve)
         const USER_SERVER_DATA_OBJECT:interfaceServerUserData = resolve as interfaceServerUserData
-        this.userInformation={
+        this.userInformation$=of({
           email:USER_SERVER_DATA_OBJECT.email,
           nickname:USER_SERVER_DATA_OBJECT.nickname,
           password:USER_SERVER_DATA_OBJECT.password,
           publications:USER_SERVER_DATA_OBJECT.publications
-        }
-        console.log(this.userInformation)
+        })
       },
       error=>{
         console.log(error)
+      },
+      ()=>{
+        this.spinner.hide()
       }
-    )
+  )
+  }
+  ngAfterViewInit(): void {
+    this.currentInformationTemplate = this.informationTemplate
+    this.currentSwitcherTemplate = this.accountTemplate
+    this.changeDetectorRef.detectChanges()
   }
 
   changeTemplate(typeTemplate: 'baseInformation' | 'accountTemplate' | 'changeInformation' | 'projectsTemplate') {
@@ -91,7 +94,12 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
     this.changeTemplate('baseInformation')
   }
   changeUserInformation(){
-    this.userControlService.PUTupdateUserOnServer(this.changeInformationForm.value)
+    const USER_COOKIE_DATA = this.userControlService.getUserInCookies()
+    if(!USER_COOKIE_DATA)return
+    let USER_SERVER_DATA_OBJECT = this.changeInformationForm.value
+    USER_SERVER_DATA_OBJECT.email=USER_COOKIE_DATA.email
+    this.spinner.show()
+    this.userControlService.PUTupdateUserOnServer(USER_SERVER_DATA_OBJECT)
     .subscribe(
       resolve=>{
         const USER_SERVER_DATA_OBJECT:interfaceUserCookie=resolve as interfaceUserCookie
@@ -104,8 +112,11 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
       },
       error=>{
         console.log(error)
+      },
+      ()=>{
+        this.spinner.hide()
       }
-    )
+  )
   }
   opacityChange() {
     const targetElement = this.elementOfComponent.nativeElement.querySelector('.informationTemplate')
@@ -123,5 +134,27 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
       this.renderer2.removeClass(currentElem, 'slideDisappearAnimation')
       this.renderer2.addClass(currentElem, 'slideAppearAnimation')
     }, 200)
+  }
+  exitFromAccount(){
+    this.userControlService.deleteUserInCookies()
+    this.router.navigateByUrl('/login')
+  }
+  deleteAccount(){
+    const USER_COOKIE_DATA = this.userControlService.getUserInCookies()
+    if(!USER_COOKIE_DATA)return
+    this.spinner.show()
+    this.userControlService.DELETEdeleteUserOnServer(USER_COOKIE_DATA)
+    .subscribe(
+      resolve=>{
+        console.log(resolve)
+      },
+      error=>{
+        console.log(error)
+      },
+      ()=>{
+        this.exitFromAccount()
+        this.spinner.hide()
+      }
+    )
   }
 }

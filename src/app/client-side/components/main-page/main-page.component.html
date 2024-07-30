@@ -1,4 +1,3 @@
-<app-navigation-panel></app-navigation-panel>
 <span class="example">
     <app-dots-bar (pointIdEmitter)="changeIphoneId($event)" [dotsArray]="dotsNamesArray"></app-dots-bar>
     <div #informationCard class="informationExample">
@@ -7,7 +6,7 @@
                 характеристики
             </h1>
             <div class="spanPropertiesExample">
-                <img class="imagePropertiesExample rotateAnimation" src="/assets/images/settingsIcon.svg" alt=":3">
+                <img loading="lazy" class="imagePropertiesExample rotateAnimation" src="/assets/images/settingsIcon.svg" alt=":3">
                 <h3>Характеристики:</h3>
             </div>
             <h3 class="propertiesInformation">Озу: {{informationIphonesExampleArray[currentIphoneId+10].Ram}} <br>
@@ -15,7 +14,7 @@
                 {{informationIphonesExampleArray[currentIphoneId+10].Acc}} <br> Камера:
                 {{informationIphonesExampleArray[currentIphoneId+10].Cam}}</h3>
         </div>
-        <img [src]="'/assets/images/iphone'+(currentIphoneId+10)+'.png'" lazyload alt=":3" class="photoExample">
+        <img loading="lazy" [src]="'/assets/images/iphone'+(currentIphoneId+10)+'.webp'" lazyload alt=":3" class="photoExample">
     </div>
 </span>
 <a href="top" class="popularBtn someBtn">ПОПУЛЯРНОЕ</a>

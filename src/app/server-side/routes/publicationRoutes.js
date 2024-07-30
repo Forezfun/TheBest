@@ -1,11 +1,19 @@
 const EXPRESS = require('express');
 const ROUTER = EXPRESS.Router();
 const PUBLICATION = require('../models/publication');
-
+const findPublications = require('../findPublications.js')
 
 ROUTER.get('/', async (request, result) => {
   try {
-    const PUBLICATIONS = await PUBLICATION.find().limit(10);
+    console.log(request.query)
+    let PUBLICATIONS
+    if(request.query.findWord){
+      const ALL_PUBLICATIONS = PUBLICATIONS = await PUBLICATION.find()
+      NEEDFUL_PUBLICATIONS_ID_ARRAY = findPublications(request.query.findWord,ALL_PUBLICATIONS)
+      PUBLICATIONS = await PUBLICATION.find({ '_id': { $in: NEEDFUL_PUBLICATIONS_ID_ARRAY } });
+    }else{
+      PUBLICATIONS = await PUBLICATION.find().limit(10);
+    }
     result.json(PUBLICATIONS);
   } catch (error) {
     result.status(500).json({ message: error.message });
@@ -24,16 +32,16 @@ ROUTER.get('/:id', async (request, result) => {
   }
 });
 ROUTER.post('/', async (request, result) => {
-  const PUBLICATION_ITEM = new PUBLICATION({
-    title: request.body.title,
-    description: request.body.description,
-    subDescription: request.body.subDescription,
-    decorationImageUrl: request.body.decorationImageUrl,
-    nameAddModulesArray: request.body.nameAddModulesArray,
-    author:request.body.author
-  });
-
   try {
+    console.log(request)
+    const PUBLICATION_ITEM = new PUBLICATION({
+      title: request.body.title,
+      description: request.body.description,
+      subDescription: request.body.subDescription,
+      decorationImageUrl: request.body.decorationImageUrl,
+      nameAddModulesArray: request.body.nameAddModulesArray,
+      author:request.body.author
+    });
     const NEW_PUBLICATION = await PUBLICATION_ITEM.save();
     result.status(201).json(NEW_PUBLICATION);
   } catch (error) {

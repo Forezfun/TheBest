@@ -1,4 +1,3 @@
-<app-navigation-panel></app-navigation-panel>
 <ng-container *ngIf="pagesIdArray$ | async as pagesIdArray">
     <app-dots-bar (pointIdEmitter)="changePage($event)" [dotsArray]="pagesIdArray"></app-dots-bar>
 </ng-container>

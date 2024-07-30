@@ -1,17 +1,16 @@
 import { NavigationPanelComponent } from '../navigation-panel/navigation-panel.component';
-import { FormBuilder, FormGroup, ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { Component, ViewChild, TemplateRef, AfterViewInit, OnInit, ChangeDetectorRef, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserControlService } from '../../services/user-control.service';
-import { interfacePublicationInformation, interfaceServerPublicationInformation } from '../../services/publication-control.service';
-import { interfaceUserCookie, interfaceServerUserData,interfaceUser } from '../../services/user-control.service';
+import { interfaceUserCookie, interfaceServerUserData, interfaceUser } from '../../services/user-control.service';
 import { Router } from '@angular/router';
-import { error } from 'console';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 type errorType = 'wrongEmail' | 'lengthPassword' | 'coincidencePassword' | 'wrongCode' | 'absenceUser' | 'default'
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [NavigationPanelComponent, ReactiveFormsModule, CommonModule],
+  imports: [NavigationPanelComponent, ReactiveFormsModule, CommonModule, NgxSpinnerModule],
   providers: [UserControlService],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.scss'
@@ -34,10 +33,9 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
   constructor(private changeDetectorRef: ChangeDetectorRef,
     private elementOfComponent: ElementRef,
     private userControlService: UserControlService,
-    private router: Router
-  ) {
-    this.userControlService.checkLogin(true)
-  }
+    private router: Router,
+    private spinner: NgxSpinnerService
+  ) { }
   ngOnInit(): void {
     this.userControlService.checkLogin(false)
     this.loginForm = new FormGroup({
@@ -65,34 +63,8 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
     this.changeDetectorRef.detectChanges();
     this.loginSpanHtmlElement = this.elementOfComponent.nativeElement.querySelector('.loginSpan') as HTMLSpanElement
   }
-
-  getUser() {
-    this.userControlService.GETgetUserOnServer({ email: 'windowspls@mail.ru', password: '4691Forezfun-' })
-  }
-  putUser() {
-    const OBJECT_FOR_REQUEST: interfaceUser = {
-      email: this.registrationForm.value.email,
-      password: this.registrationForm.value.password
-    }
-    this.userControlService.PUTupdateUserOnServer(OBJECT_FOR_REQUEST)
-      .subscribe(
-        resolve => {
-          console.log(resolve)
-        },
-        error => { console.log(error) }
-      )
-  }
-  deleteUser() {
-    this.userControlService.DELETEdeleteUserOnServer('1')
-      .subscribe(
-        resolve => {
-          console.log(resolve)
-        },
-        error => { console.log(error) }
-      )
-  }
   registrateUser() {
-    console.log(this.registrationForm.value)
+    this.spinner.show()
     const OBJECT_FOR_REQUEST: interfaceServerUserData = {
       email: this.registrationForm.value.email,
       password: this.registrationForm.value.password,
@@ -102,18 +74,22 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
     this.userControlService.POSTcreateUserOnServer(OBJECT_FOR_REQUEST)
       .subscribe(
         resolve => {
-          const USER_SERVER_DATA_OBJECT:interfaceUserCookie = resolve as interfaceUserCookie
+          const USER_SERVER_DATA_OBJECT: interfaceUserCookie = resolve as interfaceUserCookie
           this.userControlService.setUserInCookies({
             email: OBJECT_FOR_REQUEST.email,
             password: OBJECT_FOR_REQUEST.password,
-            _id:USER_SERVER_DATA_OBJECT._id
+            _id: USER_SERVER_DATA_OBJECT._id
           })
           this.router.navigateByUrl('/account')
         },
-        error => { console.log(error) }
+        error => { console.log(error) },
+        () => {
+          this.spinner.hide()
+        }
       )
   }
   loginUser() {
+    this.spinner.show()
     this.userControlService.GETgetUserOnServer(this.loginForm.value)
       .subscribe(
         resolve => {
@@ -122,7 +98,7 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
           this.userControlService.setUserInCookies({
             email: USER_SERVER_DATA_OBJECT.email,
             password: USER_SERVER_DATA_OBJECT.password,
-            _id:USER_SERVER_DATA_OBJECT._id
+            _id: USER_SERVER_DATA_OBJECT._id
           })
           this.router.navigateByUrl('/account')
         },
@@ -131,17 +107,22 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
           if (error.status === 404) {
             this.handError('absenceUser')
           }
-        }
+        },
+        () => { this.spinner.hide() }
       )
   }
   requestResetCode() {
+    this.spinner.show()
     this.changeTemplate('code');
     this.userControlService.POSTrequestResetCode(this.enterEmailForm.value.email)
       .subscribe(
         resolve => {
           this.resetCode = (resolve as any).resetCode
         },
-        error => { console.log(error) }
+        error => { console.log(error) },
+        () => {
+          this.spinner.hide()
+        }
       )
   }
   matchCode() {
@@ -158,15 +139,19 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
     }
     const DATA_OBJECT: interfaceUser = {
       email: this.enterEmailForm.value.email,
-      password:this.resetPasswordForm.value.resetPassword,
+      password: this.resetPasswordForm.value.resetPassword,
       resetPassword: this.resetPasswordForm.value.resetPassword,
     }
+    this.spinner.hide()
     this.userControlService.PUTupdateUserPasswordOnServer(DATA_OBJECT)
       .subscribe(
         resolve => {
           this.changeTemplate('login')
         },
-        error => { console.log(error) }
+        error => { console.log(error) },
+        () => {
+          this.spinner.hide()
+        }
       )
   }
   opacityAnimation() {

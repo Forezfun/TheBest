@@ -1,7 +1,14 @@
-<app-navigation-panel></app-navigation-panel>
+<ngx-spinner
+  bdColor="rgba(51,51,51,0.8)"
+  size="medium"
+  color="#fff"
+>
+<div class="Loader"></div>
+<p style="font-size: 20px; color: white">Loading...</p>
+</ngx-spinner>
 <span class="finder">
     <input class="inputFinder" placeholder="Найти.." type="text">
-    <img class="iconFinder" src="/assets/images/iconFind.svg" (click)="findPublications()" alt="Искать">
+    <img loading="lazy" class="iconFinder" src="/assets/images/iconFind.svg" (click)="findPublications()" alt="Искать">
 </span>
 <span class="cards" >
     <span (click)="openPublication(cardInformation._id)" *ngFor="let cardInformation of PopularCardsArray" class="popularCard">
@@ -11,7 +18,7 @@
                 <h3 class="cardDescription">{{cardInformation.description}}</h3>
                 <h3 class="cardsubDescription">{{cardInformation.subDescription}}</h3>
             </span>
-            <img class="image" [src]="cardInformation.decorationImageUrl" alt=":3">
+            <img loading="lazy" class="image" [src]="cardInformation.decorationImageUrl" alt=":3">
         </span>
     </span>
 </span>

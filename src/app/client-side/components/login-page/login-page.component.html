@@ -1,12 +1,19 @@
-<app-navigation-panel></app-navigation-panel>
-<img src="/assets/images/ipad.png" alt=":3" style="display: none;" class="ipad decorationObject" />
+<ngx-spinner
+  bdColor="rgba(51,51,51,0.8)"
+  size="medium"
+  color="#fff"
+>
+<div class="Loader"></div>
+<p style="font-size: 20px; color: white">Loading...</p>
+</ngx-spinner>
+<img loading="lazy" src="/assets/images/ipad.webp" alt=":3" class="ipad decorationObject" />
 <span class="loginSpan">
   <h2 class="loginTitle">SIGN IN</h2>
   <ng-container *ngTemplateOutlet="currentTemplate"></ng-container>
-  <img class="loginGoogle" src="/assets/images/googleIcon.svg" alt=":3" />
+  <img loading="lazy" class="loginGoogle" src="/assets/images/googleIcon.svg" alt=":3" />
   <div class="errorScreen">{{userError}}</div>
 </span>
-<img src="/assets/images/iphone15.png" alt=":3" class="iphone decorationObject" />
+<img loading="lazy" src="/assets/images/iphone15.webp"  alt=":3" class="iphone decorationObject" />
 <ng-template #login>
   <form class="form" [formGroup]="loginForm" (ngSubmit)="loginUser()">
     <span class="loginFields">

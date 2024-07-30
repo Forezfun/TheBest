@@ -9,14 +9,14 @@ import { HttpClientModule } from '@angular/common/http';
 import { UserControlService } from '../../services/user-control.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 @Component({
   selector: 'app-create-page',
   standalone: true,
-  imports: [NavigationPanelComponent, NgFor, ReactiveFormsModule, NgTemplateOutlet, EditorComponent, NgIf, HttpClientModule],
+  imports: [NavigationPanelComponent, NgFor, ReactiveFormsModule, NgTemplateOutlet, EditorComponent, NgIf, HttpClientModule, NgxSpinnerModule],
   providers: [],
   templateUrl: './create-page.component.html',
-  styleUrl: './create-page.component.scss',
-  // changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './create-page.component.scss'
 })
 export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('tinyEditor') tinyEditor!: EditorComponent;
@@ -44,6 +44,7 @@ export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
   choosedImage!: HTMLImageElement
   idItem!: string
   routerSub!: Subscription
+  idPublication!: string;
   typePublicationEdit: 'Опубликовать' | 'Редактировать' = 'Опубликовать'
   constructor(
     private renderer2: Renderer2,
@@ -54,9 +55,15 @@ export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
     private userControlService: UserControlService,
     private router: Router,
     private routerSubscribe: ActivatedRoute,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private spinner: NgxSpinnerService
   ) {
     this.userControlService.checkLogin(true)
+  }
+  arrayLengthValidator(minLength: number): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      return control.value.length > minLength ? null : { length: control.value.length }
+    };
   }
   ngOnInit(): void {
     this.createForm = new FormGroup({
@@ -65,17 +72,16 @@ export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
       subDescription: new FormControl<string>('', Validators.required),
       decorationImageUrl: new FormControl<string>('', Validators.required),
       nameAddModulesArray: this.formBuilder.array([this.createNameModule()
-      ], Validators.required)
+      ], [Validators.required, this.arrayLengthValidator(1)])
     })
-
     this.routerSub = this.routerSubscribe.paramMap.subscribe(params => {
-      const idPublication = params.get('id') as string
-      if (idPublication === 'new') return
-      this.publicationControlService.GETgetPublication(idPublication)
+      this.idPublication = params.get('id') as string
+      if (this.idPublication === 'new') return
+      this.spinner.show()
+      this.publicationControlService.GETgetPublication(this.idPublication)
         .subscribe(
           resolve => {
             this.typePublicationEdit = 'Редактировать'
-            console.log(resolve)
             const PUBLICATION_SERVER_DATA_OBJECT = resolve as interfaceServerPublicationInformation
             if (PUBLICATION_SERVER_DATA_OBJECT.author !== this.userControlService.getUserInCookies()!._id) {
               this.router.navigateByUrl('/**');
@@ -86,22 +92,24 @@ export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
               title: PUBLICATION_SERVER_DATA_OBJECT.title,
               description: PUBLICATION_SERVER_DATA_OBJECT.description,
               subDescription: PUBLICATION_SERVER_DATA_OBJECT.subDescription,
+              decorationImageUrl: PUBLICATION_SERVER_DATA_OBJECT.decorationImageUrl
             });
             this.setNameModulesArray(PUBLICATION_SERVER_DATA_OBJECT.nameAddModulesArray);
-            console.log(this.createForm.value)
             this.choosedImage.src = PUBLICATION_SERVER_DATA_OBJECT.decorationImageUrl
           },
           error => {
+            console.log(error)
             this.router.navigateByUrl('/**')
+          },
+          () => {
+            this.spinner.hide()
           }
         )
     })
     this.routerSub.unsubscribe()
   }
   input(input: Event) {
-    console.log((input.target as HTMLInputElement).value)
     input.preventDefault()
-    console.log(this.createForm.value)
   }
   createNameModule(): FormGroup {
     return this.formBuilder.group({
@@ -109,21 +117,29 @@ export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
       codePage: ['']
     });
   }
-  consoleLog() {
-    console.log(this.createForm.value, 'Valid:', this.createForm.valid)
-
+  deletePublication() {
+    this.spinner.show()
+    this.publicationControlService.DELETEdeletePublication(this.idPublication)
+      .subscribe(
+        resolve => {
+          this.router.navigateByUrl('/account')
+        },
+        error => {
+          console.log(error)
+        },
+        () => {
+          this.spinner.show()
+        }
+      )
   }
-  setNameModulesArray(modules: interfacePageInformation[]) {
+  setNameModulesArray(modules: any[]) {
     const modulesArray = this.createForm.get('nameAddModulesArray') as FormArray;
     modulesArray.clear();
     modules.forEach(module => {
-      modulesArray.push(this.formBuilder.group({
-        namePage: module.namePage,
-        codePage: module.codePage
-      }));
+      modulesArray.push(this.formBuilder.group(module));
     });
-    this.createForm.setControl('nameAddModulesArray', this.formBuilder.array(modules.map(module => this.formBuilder.group(module))));
   }
+
   ngAfterViewInit(): void {
     this.chooseIconElement = this.elementOfComponent.nativeElement.querySelector('.chooseImageIcon') as HTMLImageElement
     this.editorHtmlElement = this.elementOfComponent.nativeElement.querySelector('editor') as HTMLDivElement
@@ -135,38 +151,35 @@ export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   onSubmit() {
     let PUBLICATION_DATA_OBJECT = { ...this.createForm.value } as interfacePublicationInformation;
-    PUBLICATION_DATA_OBJECT.author = this.userControlService.getUserInCookies()!._id;
+    const USER_COOKIE_DATA = this.userControlService.getUserInCookies()
+    if (!USER_COOKIE_DATA) return
+    PUBLICATION_DATA_OBJECT.author = USER_COOKIE_DATA?._id
     PUBLICATION_DATA_OBJECT.nameAddModulesArray = PUBLICATION_DATA_OBJECT.nameAddModulesArray.filter(page =>
       page.namePage && page.codePage
     );
-    if (this.typePublicationEdit === 'Опубликовать') {
-      this.publicationControlService.POSTcreatePublication(PUBLICATION_DATA_OBJECT)
-    } else {
-      this.publicationControlService.PUTupdatePublication(this.routerSubscribe.snapshot.paramMap.get('id')!, PUBLICATION_DATA_OBJECT)
-    }
-    this.router.navigateByUrl('/account')
-  }
-  getAll() {
-    this.publicationControlService.GETgetAllPublications()
-  }
-  getOne() {
-    this.publicationControlService.GETgetPublication(this.idItem)
-      .subscribe(
-        resolve => { console.log(resolve) },
-        error => { console.log(error) }
-      )
-  }
-  putOne() {
-    this.publicationControlService.PUTupdatePublication(this.idItem, this.createForm.value)
-  }
-  lastID!: string
-  deleteOne() {
-    this.publicationControlService.DELETEdeletePublication('66a075d58e6e851d5addae3d')
+    this.spinner.show()
+    const publicationRequest$ = this.typePublicationEdit === 'Опубликовать'
+      ? this.publicationControlService.POSTcreatePublication(PUBLICATION_DATA_OBJECT)
+      : this.publicationControlService.PUTupdatePublication(this.routerSubscribe.snapshot.paramMap.get('id')!, PUBLICATION_DATA_OBJECT);
 
+    publicationRequest$.subscribe(
+      resolve => {
+        this.router.navigateByUrl('/account');
+      },
+      error => {
+        console.log(error);
+      },
+      () => {
+        this.spinner.hide();
+      }
+    );
   }
   addNameAddModule() {
-    this.createForm.value.nameAddModulesArray.push({ namePage: '', codePage: '' })
+    const addPagesPublication = this.createForm.get('nameAddModulesArray') as FormArray;
+    addPagesPublication.push(this.createNameModule());
+    this.setNameModulesArray(addPagesPublication.value);
   }
+
   onPreviewFileSelect(event: Event): void {
     const IMAGE_INPUT_ELEMENT: HTMLInputElement = event.target as HTMLInputElement;
     const CHOOSED_IMAGE: File = IMAGE_INPUT_ELEMENT.files![0];
@@ -181,7 +194,9 @@ export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       const READER_RESULT = await this.imageControlService.compressBase64(READER.result.toString()) as string
       this.choosedImage.src = READER_RESULT
-      this.createForm.value.decorationImageUrl = READER_RESULT
+      this.createForm.patchValue({
+        decorationImageUrl: READER_RESULT
+      })
       if (this.elementOfComponent.nativeElement.offsetWidth <= 550) return
       this.renderer2.addClass(this.chooseIconElement, 'disabled');
     };
@@ -191,7 +206,6 @@ export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
     const HTML_NAME_INPUT_VALUE = (PARENT_ELEMENT.querySelector('input') as HTMLInputElement).value
     const PAGE_VALUE = this.createForm.value.nameAddModulesArray[idInputs].codePage
     this.createForm.value.nameAddModulesArray[idInputs].namePage = HTML_NAME_INPUT_VALUE
-    console.log(this.createForm.value.nameAddModulesArray[idInputs])
     if (HTML_NAME_INPUT_VALUE.length < 2 || !PAGE_VALUE || idInputs !== this.createForm.value.nameAddModulesArray.length - 1) return
     this.addNameAddModule()
   }

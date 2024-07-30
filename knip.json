@@ -1,0 +1,14 @@
+{
+  "entry": [
+    "src/app/server-side/**/*.js", 
+    "src/app/client-side/**/*.ts"
+  ],
+  "project": [
+    "src/app/server-side/**/*.js", 
+    "src/app/client-side/**/*.ts"
+  ],
+  "ignorePatterns": [
+    "**/node_modules/**", 
+    "**/dist/**"         
+  ]
+}

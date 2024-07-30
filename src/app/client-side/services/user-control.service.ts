@@ -61,8 +61,11 @@ export class UserControlService {
       })
     )
   }
-  DELETEdeleteUserOnServer(idUser: string) {
-    return this.httpClient.delete(`${this.apiURL}${idUser}`)
+  DELETEdeleteUserOnServer(USER_DATA_OBJECT:interfaceUserCookie) {
+    const params = new HttpParams()
+    .set('email',USER_DATA_OBJECT.email)
+    .set('password',USER_DATA_OBJECT.password)
+    return this.httpClient.delete(`${this.apiURL}`,{params})
   }
   GETgetUserOnServer(paramsObject: interfaceUser) {
     const params = new HttpParams()
@@ -93,9 +96,9 @@ export class UserControlService {
   }
   checkLogin(reverse: boolean) {
     if (!reverse) {
-      if (this.getUserInCookies()) this.router.navigateByUrl('/account')
+      if (this.getUserInCookies()){console.log('toAccount');this.router.navigateByUrl('/account')}
       return
     }
-    if (!this.getUserInCookies()) this.router.navigateByUrl('/login')
+    if (!this.getUserInCookies()){console.log('toLogin');this.router.navigateByUrl('/login')}
   }
 }

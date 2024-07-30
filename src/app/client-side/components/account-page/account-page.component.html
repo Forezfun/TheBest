@@ -1,4 +1,11 @@
-<app-navigation-panel></app-navigation-panel>
+<ngx-spinner defer
+  bdColor="rgba(51,51,51,0.8)"
+  size="medium"
+  color="#fff"
+>
+<div class="Loader"></div>
+<p style="font-size: 20px; color: white">Loading...</p>
+</ngx-spinner>
 <span class="accountTemplate">
     <span class="switcherSpan">
         <button (click)="changeTemplate('accountTemplate')" class="switcher accountInformationBtn block">
@@ -8,7 +15,13 @@
             Проекты
         </button>
     </span>
-    <ng-container *ngTemplateOutlet="currentSwitcherTemplate"></ng-container>
+    <div class="template">
+        <ng-container *ngTemplateOutlet="currentSwitcherTemplate"></ng-container>
+    </div>
+    <span class="handleAccountBtnsSpan">
+        <button class="handleAccountBtn block" (click)="exitFromAccount()">Выйти</button>
+        <button class="handleAccountBtn block" (click)="deleteAccount()">Удалить</button>
+    </span>
 </span>
 <ng-template #accountTemplate>
     <span class="accountCardTemplate slideAppearAnimation mainTemplate block">
@@ -19,31 +32,33 @@
 <ng-template #projectsTemplate>
     <span class="projectTemplate slideAppearAnimation mainTemplate block">
         <h2 class="accountInformationTitle">Мои проекты</h2>
-        <span class="accountsProjects">
-            <a [href]="'/create/'+userInformation.publications[indexProject].idPublication" class="accountProject" *ngFor="let project of userInformation.publications; let indexProject = index">
+        <span *ngIf="userInformation$|async as userInformation" class="accountsProjects">
+            <a [href]="'/create/'+userInformation.publications[indexProject].idPublication" class="accountProject"
+                *ngFor="let project of userInformation.publications; let indexProject = index">
                 <h2 class="userProjectTitle">{{indexProject + 1}}. {{project.namePublication}}</h2>
-                <img src="/assets/images/editIcon.svg" alt="" class="functionalIcon">
+                <img loading="lazy" src="/assets/images/editIcon.svg" alt="" class="functionalIcon">
             </a>
         </span>
     </span>
 </ng-template>
 <ng-template #baseInformationTemplate>
-    <span class="informationTemplate">
+    <span *ngIf="userInformation$|async as userInformation" class="informationTemplate">
         <span class="accountData">
             <div class="propertyBlock">
                 <h2 class="informationTitle">Nickname:</h2>
-                <h3 class="informationArea">{{userInformation?.nickname}}</h3>
+                <h3 class="informationArea">{{userInformation.nickname}}</h3>
             </div>
             <div class="propertyBlock">
                 <h2 class="informationTitle">Email:</h2>
-                <h3 class="informationArea">{{userInformation?.email}}</h3>
+                <h3 class="informationArea">{{userInformation.email}}</h3>
             </div>
             <div class="propertyBlock">
                 <h2 class="informationTitle">Password:</h2>
-                <h3 class="informationArea">{{userInformation?.password}}</h3>
+                <h3 class="informationArea">{{userInformation.password}}</h3>
             </div>
         </span>
-        <img src="/assets/images/editIcon.svg" (click)="changeTemplate('changeInformation')" alt="" class="functionalIcon">
+        <img loading="lazy" src="/assets/images/editIcon.svg" (click)="changeTemplate('changeInformation')" alt=""
+            class="functionalIcon">
     </span>
 </ng-template>
 
@@ -56,20 +71,15 @@
                     class="accountPasswordInput Input">
             </div>
             <div class="propertyBlock">
-                <label for="emailInput" class="informationTitle">Email:</label>
-                <input id="emailInput" formControlName="email" placeholder="email"
-                    class="accountPasswordInput Input">
-            </div>
-            <div class="propertyBlock">
                 <label for="passwordInput" class="informationTitle">Password:</label>
-                <input id="passwordInput"  formControlName="password" placeholder="password"
+                <input id="passwordInput" formControlName="password" placeholder="password"
                     class="accountPasswordInput Input">
             </div>
         </span>
         <span class="functionalsBtns">
-            <img src="/assets/images/acceptIcon.png" alt="" (click)="confirmChanges()" class="functionalIcon"
+            <img loading="lazy" src="/assets/images/acceptIcon.webp" alt="" (click)="confirmChanges()" class="functionalIcon"
                 type="submit">
-            <img src="/assets/images/cancelIcon.svg" alt="" class="functionalIcon" (click)="acceptInformation()">
+            <img loading="lazy" src="/assets/images/cancelIcon.svg" alt="" class="functionalIcon" (click)="acceptInformation()">
         </span>
     </form>
 </ng-template>

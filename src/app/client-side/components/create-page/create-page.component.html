@@ -1,9 +1,11 @@
-<app-navigation-panel></app-navigation-panel>
-<div style="cursor:pointer" (click)="getAll()">GetAll</div>
-<div style="cursor:pointer" (click)="getOne()">GetOne</div>
-<div style="cursor:pointer" (click)="putOne()">Put</div>
-<div style="cursor:pointer" (click)="deleteOne()">Delete</div>
-<div (click)="consoleLog()">console.log</div>
+<ngx-spinner
+  bdColor="rgba(51,51,51,0.8)"
+  size="medium"
+  color="#fff"
+>
+<div class="Loader"></div>
+<p style="font-size: 20px; color: white">Loading...</p>
+</ngx-spinner>
 <form [formGroup]="createForm" (ngSubmit)="onSubmit()" class="createModule">
     <span class="createCard">
         <input maxlength="20" (input)="input($event)"  formControlName="title" type="text" placeholder="Заголовок"
@@ -16,10 +18,10 @@
                     class="subDescriptionInput input" type="text"></textarea>
             </span>
             <span class="chooseImgSpan">
-                <input (change)="onPreviewFileSelect($event)"  formControlName="decorationImageUrl" type="file"
-                    class="imageAddInput" accept=".png,.jpeg,.jpg">
-                <img class="chooseImageIcon" src="/assets/images/addIcon.svg" alt="choose image" />
-                <img src='' class="choosedImg" />
+                <input (change)="onPreviewFileSelect($event)" type="file"
+                    class="imageAddInput" accept=".webp,.jpeg,.jpg">
+                <img loading="lazy" class="chooseImageIcon" src="/assets/images/addIcon.svg" alt="choose image" />
+                <img loading="lazy" src='' class="choosedImg" />
             </span>
         </span>
     </span>
@@ -32,16 +34,19 @@
                 <span (click)="openEditorWithContent($event.target!)" [attr.data-idInputs]="indexOfElementInList"
                     class="chooseFunctions chooseElements">
                     <h2 style="pointer-events:none" class="chooseDescription">Основной текст</h2>
-                    <img style="pointer-events:none" class="addIcon" src="/assets/images/addIcon.svg" alt=":3">
+                    <img loading="lazy" style="pointer-events:none" class="addIcon" src="/assets/images/addIcon.svg" alt=":3">
                 </span>
             </div>
         </span>
     </span>
+    <div *ngIf="this.idPublication!=='new'" (click)="deletePublication()" class="deletePublicationBtn chooseElements">
+        <img loading="lazy" src="/assets/images/deleteIcon.svg" alt="123" class="deletePublicationIcon">
+    </div>
 </form>
 <span class="editorContainer disabled">
     <div class="functionalsEditorsBtns">
-        <img src="/assets/images/acceptIcon.png" alt="accept" (click)="acceptUserPublication()" class="editorIcon">
-        <img src="/assets/images/cancelIcon.svg" alt="close" (click)="closeEditorPagePublication()"
+        <img loading="lazy" src="/assets/images/acceptIcon.webp" alt="accept" (click)="acceptUserPublication()" class="editorIcon">
+        <img loading="lazy" src="/assets/images/cancelIcon.svg" alt="close" (click)="closeEditorPagePublication()"
             class="editorIcon">
     </div>
     <editor #tinyEditor [apiKey]="editorApiKey" [init]="editorInitObject"/>
