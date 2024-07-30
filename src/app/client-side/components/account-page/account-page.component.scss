@@ -15,6 +15,7 @@ $templateWidth: 40vw;
 }
 .template{
     width:100%;
+    font-size: clamp(25px,1.5vw,40px);
 }
 .block {
     background-color: white;
@@ -37,9 +38,6 @@ $templateWidth: 40vw;
     cursor: pointer;
 }
 
-.accountCardTemplate {}
-
-.projectTemplate {}
 
 .mainTemplate {
     display: flex;
@@ -60,6 +58,7 @@ $templateWidth: 40vw;
 .accountInformationTitle {
     text-align: center;
     cursor: default;
+    font-size: 1.25em;
 }
 
 .informationTitle,
@@ -85,8 +84,7 @@ $templateWidth: 40vw;
     color: gray;
 }
 
-.accountsProjects {
-    
+.accountPublications { 
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -94,7 +92,7 @@ $templateWidth: 40vw;
     margin: 0 auto;
 }
 
-.accountProject {
+.accountPublication {
     display: flex;
     align-items: center;
     color: black;
@@ -104,7 +102,7 @@ $templateWidth: 40vw;
     justify-content: space-between;
 }
 
-.userProjectTitle {
+.userPublicationTitle {
     margin: 0;
 }
 
@@ -129,7 +127,7 @@ $templateWidth: 40vw;
 }
 
 .propertyBlock *,
-.accountProject *,
+.accountPublication *,
 .switcher,
 .handleAccountBtnsSpan {
     font-size: clamp(16px,1.3vw,25px);
@@ -227,7 +225,7 @@ $templateWidth: 40vw;
     }
 
     .propertyBlock *,
-    .accountProject *,
+    .accountPublication *,
     .switcher,
     .handleAccountBtnsSpan {
         font-size: 3.5vw;

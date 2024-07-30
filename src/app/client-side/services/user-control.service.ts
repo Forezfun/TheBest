@@ -70,14 +70,8 @@ export class UserControlService {
   GETgetUserOnServer(paramsObject: interfaceUser) {
     const params = new HttpParams()
       .set('email', paramsObject.email)
-      .set('password', paramsObject.password);
+      .set('passwor', paramsObject.password);
     return this.httpClient.get(`${this.apiURL}`, { params })
-    .pipe(
-      catchError(err => {
-          this.deleteUserInCookies()
-        return throwError(err);
-      })
-    )
   }
   POSTrequestResetCode(email: string) {
     return this.httpClient.post(`${this.apiURL}code/`, { email: email })
@@ -96,7 +90,7 @@ export class UserControlService {
   }
   checkLogin(reverse: boolean) {
     if (!reverse) {
-      if (this.getUserInCookies()){console.log('toAccount');this.router.navigateByUrl('/account')}
+      if (this.getUserInCookies()){console.log('toLogin');this.router.navigateByUrl('/account')}
       return
     }
     if (!this.getUserInCookies()){console.log('toLogin');this.router.navigateByUrl('/login')}

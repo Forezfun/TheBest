@@ -30,21 +30,22 @@ export class TopPageComponent implements AfterViewInit {
   findPublications() {
     this.spinner.show()
     this.publicationControlService.GETgetAllPublications(this.finderInputElement.value)
-      .subscribe(
-        resolve => {
+      .subscribe({
+        next:(resolve) => {
           this.PopularCardsArray = [];
           (resolve as interfaceServerPublicationInformation[]).forEach(publication => {
             this.PopularCardsArray = [...this.PopularCardsArray, publication]
           })
+          this.spinner.hide()
           this.changeDetectorRef.detectChanges()
         },
-        error => { console.log(error) },
-        () => {
+        error:(error) => { 
+          console.log(error)
           this.spinner.hide()
-        }
-      )
+         }
+  })
   }
-  openPublication(idPublication: string) {
-    this.router.navigateByUrl(`/publication/${idPublication}`)
-  }
+openPublication(idPublication: string) {
+  this.router.navigateByUrl(`/publication/${idPublication}`)
+}
 }

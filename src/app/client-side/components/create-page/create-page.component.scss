@@ -7,7 +7,7 @@
     display: flex;
     flex-direction: column;
     gap: 30px;
-    width: clamp(520px,50vw,630px);
+    width: clamp(550px,50vw,630px);
     margin: 0 auto;
 }
 
@@ -20,9 +20,10 @@
     flex-direction: column;
     justify-content: space-between;
     overflow: hidden;
+}
+.createCard,.namesModule{
     font-size: clamp(25px,1.5vw,35px);
 }
-
 .input {
     outline: none;
     border: none;
@@ -30,7 +31,7 @@
 }
 
 .titleInput {
-    font-size: 1.25em;
+    font-size: 1.2em;
     text-align: center;
     margin-top: 5%;
     height: 10%;
@@ -59,7 +60,7 @@
 
 .descriptionInput {
     color: black;
-    font-size: 1em;
+    font-size: 0.95em;
     overflow: hidden;
     max-height: 60%;
 }
@@ -70,7 +71,7 @@
 
 .subDescriptionInput {
     color: gray;
-    font-size: 0.9em;
+    font-size: 0.8em;
     overflow: hidden;
     max-height: 40%;
 }
@@ -119,7 +120,7 @@
     text-align: center;
     align-content: center;
     width: 100%;
-    font-size: 1.25vw;
+    font-size: 0.95em;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
 }
@@ -151,13 +152,14 @@
     border-radius: 15px;
     height: 8vw;
     max-height: 90px;
+    min-height: 65px;
 }
 
 .inputName {
     border: none;
     outline: none;
     text-align: center;
-    font-size: 1vw;
+    font-size: 0.7em;
     width: 35%;
 }
 
@@ -176,7 +178,7 @@
 
 .chooseDescription {
     text-align: center;
-    font-size: 1.125vw;
+    font-size: 0.7em;
 }
 
 .helpInformation {
@@ -239,29 +241,24 @@ editor {
 }
 @media (max-width:1024px) {
     .createModule,.editorContainer {
-        width: clamp(450px,60vw,520px);
+        width: clamp(500px,60vw,550px);
     }
-
-    .createModule * {
-        font-size: 1.5vw;
-    }
-
-    .createCard {
-        height: 35vw;
+    .createCard,.namesModule{
+        font-size: clamp(22.5px,1.75vw,30px);
     }
 }
 
 @media (max-width:768px) {
     .createModule,.editorContainer {
-        width: 70vw;
+        width: clamp(450px,70vw,550px);
     }
 
-    .createModule * {
-        font-size: 2vw;
+    .createCard,.namesModule{
+        font-size: clamp(20px,2.25vw,25px);
     }
 
     .createCard {
-        height: 40vw;
+        height: 40vh;
     }
 }
 
@@ -317,7 +314,6 @@ editor {
     }
 }
 .disabled {
-    // display: none;
     opacity: 0;
     transition: 0.5s all;
 }

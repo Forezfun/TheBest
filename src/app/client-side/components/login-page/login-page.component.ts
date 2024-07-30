@@ -6,7 +6,7 @@ import { UserControlService } from '../../services/user-control.service';
 import { interfaceUserCookie, interfaceServerUserData, interfaceUser } from '../../services/user-control.service';
 import { Router } from '@angular/router';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
-type errorType = 'wrongEmail' | 'lengthPassword' | 'coincidencePassword' | 'wrongCode' | 'absenceUser' | 'default'
+type errorType = 'wrongEmail' | 'lengthPassword' | 'coincidencePassword' | 'wrongCode' | 'absenceUser' | 'default' | 'userExists'
 @Component({
   selector: 'app-login-page',
   standalone: true,
@@ -29,7 +29,7 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
   resetPasswordForm!: FormGroup;
   loginSpanHtmlElement!: HTMLSpanElement
   userError: string = ' '
-  private resetCode!: number
+  private resetCode!: string
   constructor(private changeDetectorRef: ChangeDetectorRef,
     private elementOfComponent: ElementRef,
     private userControlService: UserControlService,
@@ -72,27 +72,28 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
       publications: []
     }
     this.userControlService.POSTcreateUserOnServer(OBJECT_FOR_REQUEST)
-      .subscribe(
-        resolve => {
+      .subscribe({
+        next:(resolve) => {
           const USER_SERVER_DATA_OBJECT: interfaceUserCookie = resolve as interfaceUserCookie
           this.userControlService.setUserInCookies({
             email: OBJECT_FOR_REQUEST.email,
             password: OBJECT_FOR_REQUEST.password,
             _id: USER_SERVER_DATA_OBJECT._id
           })
+          this.spinner.hide()
           this.router.navigateByUrl('/account')
         },
-        error => { console.log(error) },
-        () => {
+        error:(error) => { 
+          console.log(error) 
           this.spinner.hide()
-        }
-      )
+        },
+  })
   }
   loginUser() {
     this.spinner.show()
     this.userControlService.GETgetUserOnServer(this.loginForm.value)
-      .subscribe(
-        resolve => {
+      .subscribe({
+        next: (resolve) => {
           console.log(resolve)
           const USER_SERVER_DATA_OBJECT = resolve as interfaceUserCookie
           this.userControlService.setUserInCookies({
@@ -100,41 +101,43 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
             password: USER_SERVER_DATA_OBJECT.password,
             _id: USER_SERVER_DATA_OBJECT._id
           })
+          this.spinner.hide()
           this.router.navigateByUrl('/account')
         },
-        error => {
+        error: (error) => {
           console.log(error)
-          if (error.status === 404) {
-            this.handError('absenceUser')
-          }
-        },
-        () => { this.spinner.hide() }
-      )
+          if (error.status === 404 || error.status === 403)
+            this.handleError('absenceUser')
+          this.spinner.hide()
+        }
+      })
   }
   requestResetCode() {
     this.spinner.show()
     this.changeTemplate('code');
     this.userControlService.POSTrequestResetCode(this.enterEmailForm.value.email)
-      .subscribe(
-        resolve => {
-          this.resetCode = (resolve as any).resetCode
-        },
-        error => { console.log(error) },
-        () => {
+      .subscribe({
+        next: (resolve) => {
+          this.resetCode = (resolve as {resetCode:string}).resetCode
           this.spinner.hide()
-        }
-      )
+        },
+        error: (error) => {
+          console.log(error)
+          this.spinner.hide()
+        },
+
+      })
   }
   matchCode() {
     if (this.enterCodeForm.value.code !== this.resetCode) {
-      this.handError('wrongCode')
+      this.handleError('wrongCode')
       return
     }
     this.changeTemplate('reset');
   }
   resetUserPassword() {
     if (this.resetPasswordForm.value.resetPassword !== this.resetPasswordForm.value.resetPasswordCheck) {
-      this.handError('coincidencePassword')
+      this.handleError('coincidencePassword')
       return
     }
     const DATA_OBJECT: interfaceUser = {
@@ -144,15 +147,16 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
     }
     this.spinner.hide()
     this.userControlService.PUTupdateUserPasswordOnServer(DATA_OBJECT)
-      .subscribe(
-        resolve => {
+      .subscribe({
+        next:() => {
           this.changeTemplate('login')
-        },
-        error => { console.log(error) },
-        () => {
           this.spinner.hide()
-        }
-      )
+        },
+        error:(error) => { 
+          console.log(error)
+          this.spinner.hide()
+         }
+  })
   }
   opacityAnimation() {
     this.loginSpanHtmlElement.classList.add('opacityAnimationClass')
@@ -179,8 +183,11 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
     }, 400)
     this.opacityAnimation()
   }
-  handError(error: errorType) {
+  handleError(error: errorType) {
     switch (error) {
+      case 'userExists':
+        this.userError = 'Пользователь уже существует';
+        break;
       case 'wrongEmail':
         this.userError = 'Неправильный формат почты';
         break;

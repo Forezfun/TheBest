@@ -17,7 +17,7 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
   @ViewChild('baseInformationTemplate', { read: TemplateRef }) private informationTemplate!: TemplateRef<any>;
   @ViewChild('changeAccountInformation', { read: TemplateRef }) private changeInformationTemplate!: TemplateRef<any>;
   @ViewChild('accountTemplate', { read: TemplateRef }) private accountTemplate!: TemplateRef<any>;
-  @ViewChild('projectsTemplate', { read: TemplateRef }) private projectsTemplate!: TemplateRef<any>;
+  @ViewChild('publicationsTemplate', { read: TemplateRef }) private publicationsTemplate!: TemplateRef<any>;
   currentInformationTemplate!: TemplateRef<any>
   currentSwitcherTemplate!: TemplateRef<any>
   changeInformationForm!: FormGroup;
@@ -42,9 +42,8 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
     if(!userDataObject)return
     this.spinner.show()
     this.userControlService.GETgetUserOnServer(userDataObject)
-    .subscribe(
-      resolve=>{
-        console.log(resolve)
+    .subscribe({
+      next:(resolve)=>{
         const USER_SERVER_DATA_OBJECT:interfaceServerUserData = resolve as interfaceServerUserData
         this.userInformation$=of({
           email:USER_SERVER_DATA_OBJECT.email,
@@ -53,13 +52,11 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
           publications:USER_SERVER_DATA_OBJECT.publications
         })
       },
-      error=>{
+      error:(error)=>{
         console.log(error)
-      },
-      ()=>{
         this.spinner.hide()
       }
-  )
+  })
   }
   ngAfterViewInit(): void {
     this.currentInformationTemplate = this.informationTemplate
@@ -67,7 +64,7 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
     this.changeDetectorRef.detectChanges()
   }
 
-  changeTemplate(typeTemplate: 'baseInformation' | 'accountTemplate' | 'changeInformation' | 'projectsTemplate') {
+  changeTemplate(typeTemplate: 'baseInformation' | 'accountTemplate' | 'changeInformation' | 'publicationsTemplate') {
     switch (typeTemplate) {
       case 'baseInformation':
         this.opacityChange()
@@ -80,8 +77,8 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
       case 'accountTemplate':
         this.changeMainTemplate('information')
         break
-      case 'projectsTemplate':
-        this.changeMainTemplate('projects')
+      case 'publicationsTemplate':
+        this.changeMainTemplate('publications')
     }
 
   }
@@ -100,23 +97,22 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
     USER_SERVER_DATA_OBJECT.email=USER_COOKIE_DATA.email
     this.spinner.show()
     this.userControlService.PUTupdateUserOnServer(USER_SERVER_DATA_OBJECT)
-    .subscribe(
-      resolve=>{
+    .subscribe({
+      next:(resolve)=>{
         const USER_SERVER_DATA_OBJECT:interfaceUserCookie=resolve as interfaceUserCookie
         this.userControlService.setUserInCookies({
           email:USER_SERVER_DATA_OBJECT.email,
           password:USER_SERVER_DATA_OBJECT.password,
           _id:USER_SERVER_DATA_OBJECT._id
         })
+        this.spinner.hide()
         this.router.navigateByUrl('/login')
       },
-      error=>{
+      error:(error)=>{
         console.log(error)
-      },
-      ()=>{
         this.spinner.hide()
       }
-  )
+  })
   }
   opacityChange() {
     const targetElement = this.elementOfComponent.nativeElement.querySelector('.informationTemplate')
@@ -125,12 +121,12 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
       this.renderer2.removeClass(targetElement, 'opacityAnimation')
     }, 800)
   }
-  changeMainTemplate(appearedItem: 'information' | 'projects') {
+  changeMainTemplate(appearedItem: 'information' | 'publications') {
     const currentElem = this.elementOfComponent.nativeElement.querySelector('.mainTemplate')
     this.renderer2.removeClass(currentElem, 'slideAppearAnimation')
     this.renderer2.addClass(currentElem, 'slideDisappearAnimation')
     setTimeout(() => {
-      this.currentSwitcherTemplate = appearedItem == 'information' ? this.accountTemplate : this.projectsTemplate;
+      this.currentSwitcherTemplate = appearedItem == 'information' ? this.accountTemplate : this.publicationsTemplate;
       this.renderer2.removeClass(currentElem, 'slideDisappearAnimation')
       this.renderer2.addClass(currentElem, 'slideAppearAnimation')
     }, 200)
@@ -144,17 +140,15 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
     if(!USER_COOKIE_DATA)return
     this.spinner.show()
     this.userControlService.DELETEdeleteUserOnServer(USER_COOKIE_DATA)
-    .subscribe(
-      resolve=>{
-        console.log(resolve)
+    .subscribe({
+      next:()=>{
+          this.exitFromAccount()
+          this.spinner.hide()
       },
-      error=>{
+      error:(error)=>{
         console.log(error)
-      },
-      ()=>{
-        this.exitFromAccount()
         this.spinner.hide()
       }
-    )
+  })
   }
 }

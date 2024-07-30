@@ -79,8 +79,8 @@ export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.idPublication === 'new') return
       this.spinner.show()
       this.publicationControlService.GETgetPublication(this.idPublication)
-        .subscribe(
-          resolve => {
+        .subscribe({
+          next: (resolve) => {
             this.typePublicationEdit = 'Редактировать'
             const PUBLICATION_SERVER_DATA_OBJECT = resolve as interfaceServerPublicationInformation
             if (PUBLICATION_SERVER_DATA_OBJECT.author !== this.userControlService.getUserInCookies()!._id) {
@@ -96,15 +96,14 @@ export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
             });
             this.setNameModulesArray(PUBLICATION_SERVER_DATA_OBJECT.nameAddModulesArray);
             this.choosedImage.src = PUBLICATION_SERVER_DATA_OBJECT.decorationImageUrl
-          },
-          error => {
-            console.log(error)
-            this.router.navigateByUrl('/**')
-          },
-          () => {
             this.spinner.hide()
+          },
+          error: (error) => {
+            console.log(error)
+            this.spinner.hide()
+            this.router.navigateByUrl('/**')
           }
-        )
+        })
     })
     this.routerSub.unsubscribe()
   }
@@ -120,117 +119,115 @@ export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
   deletePublication() {
     this.spinner.show()
     this.publicationControlService.DELETEdeletePublication(this.idPublication)
-      .subscribe(
-        resolve => {
-          this.router.navigateByUrl('/account')
-        },
-        error => {
+      .subscribe({
+        next:() => {
+          this.spinner.hide()
+        this.router.navigateByUrl('/account')
+      },
+        error:(error) => {
           console.log(error)
-        },
-        () => {
-          this.spinner.show()
+          this.spinner.hide()
         }
-      )
-  }
-  setNameModulesArray(modules: any[]) {
-    const modulesArray = this.createForm.get('nameAddModulesArray') as FormArray;
-    modulesArray.clear();
-    modules.forEach(module => {
-      modulesArray.push(this.formBuilder.group(module));
-    });
-  }
+  })
+}
+setNameModulesArray(modules: any[]) {
+  const modulesArray = this.createForm.get('nameAddModulesArray') as FormArray;
+  modulesArray.clear();
+  modules.forEach(module => {
+    modulesArray.push(this.formBuilder.group(module));
+  });
+}
 
-  ngAfterViewInit(): void {
-    this.chooseIconElement = this.elementOfComponent.nativeElement.querySelector('.chooseImageIcon') as HTMLImageElement
+ngAfterViewInit(): void {
+  this.chooseIconElement = this.elementOfComponent.nativeElement.querySelector('.chooseImageIcon') as HTMLImageElement
     this.editorHtmlElement = this.elementOfComponent.nativeElement.querySelector('editor') as HTMLDivElement
     this.choosedImage = this.elementOfComponent.nativeElement.querySelector('.choosedImg') as HTMLImageElement
     this.changeDetectorRef.detectChanges()
-  }
-  ngOnDestroy(): void {
+}
+ngOnDestroy(): void {
 
-  }
-  onSubmit() {
-    let PUBLICATION_DATA_OBJECT = { ...this.createForm.value } as interfacePublicationInformation;
-    const USER_COOKIE_DATA = this.userControlService.getUserInCookies()
-    if (!USER_COOKIE_DATA) return
-    PUBLICATION_DATA_OBJECT.author = USER_COOKIE_DATA?._id
-    PUBLICATION_DATA_OBJECT.nameAddModulesArray = PUBLICATION_DATA_OBJECT.nameAddModulesArray.filter(page =>
-      page.namePage && page.codePage
-    );
-    this.spinner.show()
-    const publicationRequest$ = this.typePublicationEdit === 'Опубликовать'
-      ? this.publicationControlService.POSTcreatePublication(PUBLICATION_DATA_OBJECT)
-      : this.publicationControlService.PUTupdatePublication(this.routerSubscribe.snapshot.paramMap.get('id')!, PUBLICATION_DATA_OBJECT);
+}
+onSubmit() {
+  let PUBLICATION_DATA_OBJECT = { ...this.createForm.value } as interfacePublicationInformation;
+  const USER_COOKIE_DATA = this.userControlService.getUserInCookies()
+  if (!USER_COOKIE_DATA) return
+  PUBLICATION_DATA_OBJECT.author = USER_COOKIE_DATA?._id
+  PUBLICATION_DATA_OBJECT.nameAddModulesArray = PUBLICATION_DATA_OBJECT.nameAddModulesArray.filter(page =>
+    page.namePage && page.codePage
+  );
+  this.spinner.show()
+  const publicationRequest$ = this.typePublicationEdit === 'Опубликовать'
+    ? this.publicationControlService.POSTcreatePublication(PUBLICATION_DATA_OBJECT)
+    : this.publicationControlService.PUTupdatePublication(this.routerSubscribe.snapshot.paramMap.get('id')!, PUBLICATION_DATA_OBJECT);
 
-    publicationRequest$.subscribe(
-      resolve => {
-        this.router.navigateByUrl('/account');
-      },
-      error => {
-        console.log(error);
-      },
-      () => {
-        this.spinner.hide();
-      }
-    );
-  }
-  addNameAddModule() {
-    const addPagesPublication = this.createForm.get('nameAddModulesArray') as FormArray;
-    addPagesPublication.push(this.createNameModule());
-    this.setNameModulesArray(addPagesPublication.value);
-  }
-
-  onPreviewFileSelect(event: Event): void {
-    const IMAGE_INPUT_ELEMENT: HTMLInputElement = event.target as HTMLInputElement;
-    const CHOOSED_IMAGE: File = IMAGE_INPUT_ELEMENT.files![0];
-    const READER: FileReader = new FileReader();
-    READER.readAsDataURL(CHOOSED_IMAGE)
-    READER.onload = async () => {
-      if (READER.result === null) return
-      if (this.choosedImage.naturalWidth > this.choosedImage.naturalHeight) {
-        this.choosedImage.style.height = '90%';
-      } else {
-        this.choosedImage.style.height = 'auto';
-      }
-      const READER_RESULT = await this.imageControlService.compressBase64(READER.result.toString()) as string
-      this.choosedImage.src = READER_RESULT
-      this.createForm.patchValue({
-        decorationImageUrl: READER_RESULT
-      })
-      if (this.elementOfComponent.nativeElement.offsetWidth <= 550) return
-      this.renderer2.addClass(this.chooseIconElement, 'disabled');
-    };
-  }
-  checkForChange(idInputs: number) {
-    const PARENT_ELEMENT = this.elementOfComponent.nativeElement.querySelector(`[data-idInputs="${idInputs}"]`).parentElement
-    const HTML_NAME_INPUT_VALUE = (PARENT_ELEMENT.querySelector('input') as HTMLInputElement).value
-    const PAGE_VALUE = this.createForm.value.nameAddModulesArray[idInputs].codePage
-    this.createForm.value.nameAddModulesArray[idInputs].namePage = HTML_NAME_INPUT_VALUE
-    if (HTML_NAME_INPUT_VALUE.length < 2 || !PAGE_VALUE || idInputs !== this.createForm.value.nameAddModulesArray.length - 1) return
-    this.addNameAddModule()
-  }
-  inputsChangeForAddModule(eventTarget: EventTarget) {
-    const INPUT_INDEX = +(eventTarget as HTMLInputElement).getAttribute('placeholder')!.replace(/\D/g, '') - 1;
-    this.checkForChange(INPUT_INDEX)
-  }
-  openEditor(eventTarget: EventTarget) {
-    this.renderer2.removeClass(this.editorHtmlElement.parentElement, 'disabled')
-    this.currentIdPushedInput = +(eventTarget as HTMLDivElement).getAttribute('data-idinputs')!
-  }
-  closeEditorPagePublication() {
-    this.renderer2.addClass(this.editorHtmlElement.parentElement, 'disabled')
-  }
-  openEditorWithContent(eventTarget: EventTarget) {
-    const PAGE_ID: number = +(eventTarget as HTMLSpanElement).getAttribute('data-idInputs')!
-    if (this.createForm.value.nameAddModulesArray[PAGE_ID]) {
-      this.tinyEditor.editor.setContent(this.createForm.value.nameAddModulesArray[PAGE_ID].codePage)
+  publicationRequest$.subscribe({
+    next:() => {
+      this.router.navigateByUrl('/account');
+      this.spinner.hide()
+    },
+    error:(error) => {
+      console.log(error);
+      this.spinner.hide()
     }
-    this.openEditor(eventTarget)
+});
+}
+addNameAddModule() {
+  const addPagesPublication = this.createForm.get('nameAddModulesArray') as FormArray;
+  addPagesPublication.push(this.createNameModule());
+  this.setNameModulesArray(addPagesPublication.value);
+}
+
+onPreviewFileSelect(event: Event): void {
+  const IMAGE_INPUT_ELEMENT: HTMLInputElement = event.target as HTMLInputElement;
+  const CHOOSED_IMAGE: File = IMAGE_INPUT_ELEMENT.files![0];
+  const READER: FileReader = new FileReader();
+  READER.readAsDataURL(CHOOSED_IMAGE)
+    READER.onload = async () => {
+    if (READER.result === null) return
+    if (this.choosedImage.naturalWidth > this.choosedImage.naturalHeight) {
+      this.choosedImage.style.height = '90%';
+    } else {
+      this.choosedImage.style.height = 'auto';
+    }
+    const READER_RESULT = await this.imageControlService.compressBase64(READER.result.toString()) as string
+    this.choosedImage.src = READER_RESULT
+    this.createForm.patchValue({
+      decorationImageUrl: READER_RESULT
+    })
+    if (this.elementOfComponent.nativeElement.offsetWidth <= 550) return
+    this.renderer2.addClass(this.chooseIconElement, 'disabled');
+  };
+}
+checkForChange(idInputs: number) {
+  const PARENT_ELEMENT = this.elementOfComponent.nativeElement.querySelector(`[data-idInputs="${idInputs}"]`).parentElement
+  const HTML_NAME_INPUT_VALUE = (PARENT_ELEMENT.querySelector('input') as HTMLInputElement).value
+  const PAGE_VALUE = this.createForm.value.nameAddModulesArray[idInputs].codePage
+  this.createForm.value.nameAddModulesArray[idInputs].namePage = HTML_NAME_INPUT_VALUE
+  if (HTML_NAME_INPUT_VALUE.length < 2 || !PAGE_VALUE || idInputs !== this.createForm.value.nameAddModulesArray.length - 1) return
+  this.addNameAddModule()
+}
+inputsChangeForAddModule(eventTarget: EventTarget) {
+  const INPUT_INDEX = +(eventTarget as HTMLInputElement).getAttribute('placeholder')!.replace(/\D/g, '') - 1;
+  this.checkForChange(INPUT_INDEX)
+}
+openEditor(eventTarget: EventTarget) {
+  this.renderer2.removeClass(this.editorHtmlElement.parentElement, 'disabled')
+  this.currentIdPushedInput = +(eventTarget as HTMLDivElement).getAttribute('data-idinputs')!
+}
+closeEditorPagePublication() {
+  this.renderer2.addClass(this.editorHtmlElement.parentElement, 'disabled')
+}
+openEditorWithContent(eventTarget: EventTarget) {
+  const PAGE_ID: number = +(eventTarget as HTMLSpanElement).getAttribute('data-idInputs')!
+  if (this.createForm.value.nameAddModulesArray[PAGE_ID]) {
+    this.tinyEditor.editor.setContent(this.createForm.value.nameAddModulesArray[PAGE_ID].codePage)
   }
-  acceptUserPublication() {
-    this.createForm.value.nameAddModulesArray[this.currentIdPushedInput].codePage = this.tinyEditor.editor.getContent()
-    this.checkForChange(this.currentIdPushedInput)
-    this.closeEditorPagePublication()
-    this.tinyEditor.editor.setContent('')
-  }
+  this.openEditor(eventTarget)
+}
+acceptUserPublication() {
+  this.createForm.value.nameAddModulesArray[this.currentIdPushedInput].codePage = this.tinyEditor.editor.getContent()
+  this.checkForChange(this.currentIdPushedInput)
+  this.closeEditorPagePublication()
+  this.tinyEditor.editor.setContent('')
+}
 }

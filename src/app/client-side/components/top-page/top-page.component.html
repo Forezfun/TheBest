@@ -6,11 +6,13 @@
 <div class="Loader"></div>
 <p style="font-size: 20px; color: white">Loading...</p>
 </ngx-spinner>
-<span class="finder">
-    <input class="inputFinder" placeholder="Найти.." type="text">
-    <img loading="lazy" class="iconFinder" src="/assets/images/iconFind.svg" (click)="findPublications()" alt="Искать">
-</span>
 <span class="cards" >
+    <span class="finder">
+        <input class="inputFinder" placeholder="Найти.." type="text">
+        <button (click)="findPublications()">
+            <img loading="lazy" class="iconFinder" src="/assets/images/iconFind.svg" alt="Искать">
+        </button>
+    </span>
     <span (click)="openPublication(cardInformation._id)" *ngFor="let cardInformation of PopularCardsArray" class="popularCard">
         <h2 class="title">{{cardInformation.title}}</h2>
         <span class="decorations">

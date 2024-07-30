@@ -11,7 +11,7 @@
         <button (click)="changeTemplate('accountTemplate')" class="switcher accountInformationBtn block">
             Аккаунт
         </button>
-        <button (click)="changeTemplate('projectsTemplate')" class="switcher accountProjectsBtn block">
+        <button (click)="changeTemplate('publicationsTemplate')" class="switcher accountPublicationsBtn block">
             Проекты
         </button>
     </span>
@@ -29,13 +29,13 @@
         <ng-container *ngTemplateOutlet="currentInformationTemplate"></ng-container>
     </span>
 </ng-template>
-<ng-template #projectsTemplate>
-    <span class="projectTemplate slideAppearAnimation mainTemplate block">
+<ng-template #publicationsTemplate>
+    <span class="publicationTemplate slideAppearAnimation mainTemplate block">
         <h2 class="accountInformationTitle">Мои проекты</h2>
-        <span *ngIf="userInformation$|async as userInformation" class="accountsProjects">
-            <a [href]="'/create/'+userInformation.publications[indexProject].idPublication" class="accountProject"
-                *ngFor="let project of userInformation.publications; let indexProject = index">
-                <h2 class="userProjectTitle">{{indexProject + 1}}. {{project.namePublication}}</h2>
+        <span *ngIf="userInformation$|async as userInformation" class="accountPublications">
+            <a [href]="'/create/'+userInformation.publications[indexPublication].idPublication" class="accountPublication"
+                *ngFor="let publication of userInformation.publications; let indexPublication = index">
+                <h2 class="userPublicationTitle">{{indexPublication + 1}}. {{publication.namePublication}}</h2>
                 <img loading="lazy" src="/assets/images/editIcon.svg" alt="" class="functionalIcon">
             </a>
         </span>
