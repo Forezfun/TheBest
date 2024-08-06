@@ -101,7 +101,6 @@ export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
             this.spinner.hide()
           },
           error: (error) => {
-            console.log(error)
             this.spinner.hide()
             this.router.navigateByUrl('/**')
           }
@@ -127,7 +126,6 @@ export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
         this.router.navigateByUrl('/account')
       },
         error:(error) => {
-          console.log(error)
           this.spinner.hide()
         }
   })
@@ -168,7 +166,6 @@ onSubmit() {
       this.spinner.hide()
     },
     error:(error) => {
-      console.log(error);
       this.spinner.hide()
     }
 });

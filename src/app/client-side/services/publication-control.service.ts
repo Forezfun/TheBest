@@ -25,7 +25,6 @@ export class PublicationControlService {
     return this.httpClient.post(this.apiURL, informationPublication)
   }
   PUTupdatePublication(idPublication: string, informationPublication: interfacePublicationInformation) {
-    console.log(idPublication)
     return this.httpClient.put(`${this.apiURL}${idPublication}`, informationPublication)
   }
   GETgetAllPublications(findWord: string) {
@@ -34,11 +33,9 @@ export class PublicationControlService {
         return this.httpClient.get(this.apiURL,{params})
   }
   GETgetPublication(idPublication: string) {
-    console.log(idPublication)
     return this.httpClient.get(`${this.apiURL}${idPublication}`)
   }
   DELETEdeletePublication(idPublication: string) {
-    console.log(idPublication)
     return this.httpClient.delete(`${this.apiURL}${idPublication}`)
 
   }

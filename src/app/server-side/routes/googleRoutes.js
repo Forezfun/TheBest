@@ -14,7 +14,6 @@ let oauth2Client = new google.auth.OAuth2(
 );
 
 ROUTER.get('/geturl', async (request, result) => {
-  console.log('Request received for authorization route');
   try {
     const scopes = ['profile', 'email']
     const url = oauth2Client.generateAuthUrl({
@@ -30,7 +29,6 @@ ROUTER.get('/geturl', async (request, result) => {
 ROUTER.get('/auth', async (request, result) => {
   try {
     const { code } = request.query;
-    console.log(code)
     const { tokens } = await oauth2Client.getToken(code);
     oauth2Client.setCredentials(tokens);
     const oauth2 = google.oauth2({
@@ -38,7 +36,6 @@ ROUTER.get('/auth', async (request, result) => {
       auth: oauth2Client,
     });
     const { data: userInfo } = await oauth2.userinfo.get();
-    console.log('UserInfo:', userInfo);
     const FIND_USER = await GOOGLE_USER.findOne({ googleId: userInfo.id })
     let USER_BASE_DATA
     if (FIND_USER) {
@@ -64,26 +61,21 @@ ROUTER.get('/auth', async (request, result) => {
     }
     result.json(USER_BASE_DATA)
   } catch (error) {
-    console.error('Error handling Google callback:', error);
     result.status(500).json({ message: error.message });
   }
 });
 ROUTER.get('/', async (request, result) => {
   try {
     const USER_ITEM = await GOOGLE_USER.findById(request.query.userId)
-    console.log(USER_ITEM)
     if (!USER_ITEM) {
-      result.status(404).json({ message: 'User is not defined' })
+      result.status(404).json({ message: 'User is not found' })
       return
     }
-    console.log('SERVER SESSION ID:',USER_ITEM.sessionId)
-    console.log('USER SESSION ID:',request.query.sessionId)
     if (USER_ITEM.sessionId !== request.query.sessionId) {
       result.status(409).json({ message: 'No access' })
       return
     }
     let USER_PUBLICATIONS = await PUBLICATION.find({ author: USER_ITEM._id });
-    console.log(USER_PUBLICATIONS)
     let publicationDetails = await Promise.all(
       USER_PUBLICATIONS.map(async (publication) => {
         let pub = await PUBLICATION.findOne({ _id: publication._id });
@@ -108,11 +100,9 @@ ROUTER.get('/', async (request, result) => {
 });
 ROUTER.put('/changeinformation', async (request, result) => {
   try {
-    console.log(request)
     const USER_ITEM = await GOOGLE_USER.findById(request.body._id)
-    console.log(USER_ITEM)
     if (!USER_ITEM) {
-      result.status(404).json({ message: 'User is not defined' })
+      result.status(404).json({ message: 'User is not found' })
       return
     }
     if (USER_ITEM.sessionId !== request.body.sessionId) {
@@ -130,7 +120,7 @@ ROUTER.delete('/', async (request, result) => {
   try {
     const USER_ITEM = await GOOGLE_USER.findById(request.query.userId)
     if (!USER_ITEM) {
-      result.status(404).json({ message: 'User is not defined' })
+      result.status(404).json({ message: 'User is not found' })
       return
     }
     if (USER_ITEM.sessionId !== request.query.sessionId) {
@@ -138,6 +128,7 @@ ROUTER.delete('/', async (request, result) => {
       return
     }
     await GOOGLE_USER.deleteOne({ _id: USER_ITEM._id });
+    await PUBLICATION.deleteMany({ author: request.query.userId });
     result.json({ message: 'User delete successful' })
   } catch (error) {
     result.status(500).json({ message: error.message });

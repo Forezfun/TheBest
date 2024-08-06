@@ -11,7 +11,7 @@ ROUTER.put('/changepassword', async (request, result) => {
   try {
     const USER_ITEM = await USER.findOne({ email: request.body.email })
     if (!USER_ITEM) {
-      return result.status(404).json({ message: 'User is not defined', status: 404 });
+      return result.status(404).json({ message: 'User is not found', status: 404 });
     }
     USER_ITEM.password = encryptPassword(request.body.password)
     const UPDATED_USER = await USER_ITEM.save();
@@ -27,7 +27,7 @@ ROUTER.put('/changeinformation', async (request, result) => {
       return result.status(403).json({ message: 'No access', status: 403 });
     }
     if (!USER_ITEM) {
-      return result.status(404).json({ message: 'User not found'});
+      return result.status(404).json({ message: 'User is not found'});
     }
     USER_ITEM.nickname = request.body.nickname
     USER_ITEM.password = encryptPassword(request.body.password);
@@ -43,7 +43,7 @@ ROUTER.get('/auth', async (request, result) => {
   try {
     const USER_ITEM = await USER.findOne({ email: request.query.email })
     if (!USER_ITEM) {
-      return result.status(404).json({ message: 'User is not defined', status: 404 });
+      return result.status(404).json({ message: 'User is not found', status: 404 });
     }
     const matchPasswords = await checkUserAccess(USER_ITEM._id, request.query.password)
     if (!matchPasswords) {
@@ -65,15 +65,13 @@ ROUTER.get('/auth', async (request, result) => {
 ROUTER.get('/', async (request, result) => {
   try {
     const USER_ITEM = await USER.findById(request.query.userId)
-    console.log(request.query.userId,USER_ITEM)
     if (!USER_ITEM) {
-      return result.status(404).json({ message: 'User is not defined', status: 404 });
+      return result.status(404).json({ message: 'User is not found', status: 404 });
     }
     if (USER_ITEM.sessionId!==request.query.sessionId) {
       return result.status(403).json({ message: 'No access', status: 403 });
     }
     let USER_PUBLICATIONS = await PUBLICATION.find({ author: USER_ITEM._id });
-    console.log(USER_PUBLICATIONS)
     let publicationDetails = await Promise.all(
       USER_PUBLICATIONS.map(async (publication) => {
         let pub = await PUBLICATION.findOne({ _id: publication._id });
@@ -109,7 +107,6 @@ ROUTER.post('/code', async (request, result) => {
 ROUTER.post('/', async (request, result) => {
   try {
     const USER_ITEM_CHECK = await USER.findOne({email:request.body.email})
-    console.log(USER_ITEM_CHECK)
     if(USER_ITEM_CHECK){
       result.status(409).json({ message: 'User already exists'});
       return
@@ -136,13 +133,14 @@ ROUTER.delete('/', async (request, result) => {
   try {
     const USER_ITEM = await USER.findById(request.query.userId)
     if (!USER_ITEM) {
-      return result.status(404).json({ message: 'User not found' });
+      return result.status(404).json({ message: 'User is not found' });
     }
     if (USER_ITEM.sessionId!==request.query.sessionId) {
       return result.status(409).json({ message: 'No access', status: 403 });
     }
-    const DELETED_USER = await USER.deleteOne({ _id: USER_ITEM._id });
-    result.json(DELETED_USER)
+    await USER.deleteOne({ _id: USER_ITEM._id });
+    await PUBLICATION.deleteMany({ author: request.query.userId });
+    result.json({ message: 'User delete successful' })
   } catch (error) {
     result.status(500).json({ message: error.message });
   }

@@ -5,7 +5,6 @@ const findPublications = require('../findPublications.js')
 
 ROUTER.get('/', async (request, result) => {
   try {
-    console.log(request.query)
     let PUBLICATIONS
     if(request.query.findWord){
       const ALL_PUBLICATIONS = PUBLICATIONS = await PUBLICATION.find()
@@ -33,7 +32,6 @@ ROUTER.get('/:id', async (request, result) => {
 });
 ROUTER.post('/', async (request, result) => {
   try {
-    console.log(request)
     const PUBLICATION_ITEM = new PUBLICATION({
       title: request.body.title,
       description: request.body.description,
@@ -50,7 +48,6 @@ ROUTER.post('/', async (request, result) => {
 });
 ROUTER.put('/:id', async (request, result) => {
   try {
-    console.log(request)
     const PUBLICATION_ITEM = await PUBLICATION.findById(request.params.id);
     if (!PUBLICATION_ITEM) {
       return result.status(404).json({ message: 'Publication not found' });

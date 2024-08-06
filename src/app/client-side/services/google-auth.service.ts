@@ -26,7 +26,6 @@ export class GoogleAuthService {
   }
   PUTupdateUserOnServer(updateData:interfaceUserChange,userBaseData:interfaceUserServerBaseData){
     const UPDATE_SERVER_DATA = {...updateData,...userBaseData}
-    console.log(UPDATE_SERVER_DATA)
     return this.httpClient.put(`${this.apiURL}changeinformation`,UPDATE_SERVER_DATA)
   }
   DELETEdeleteUserOnServer(userBaseData:interfaceUserServerBaseData){

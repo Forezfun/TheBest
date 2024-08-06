@@ -1,10 +1,6 @@
-<ngx-spinner defer
-  bdColor="rgba(51,51,51,0.8)"
-  size="medium"
-  color="#fff"
->
-<div class="Loader"></div>
-<p style="font-size: 20px; color: white">Loading...</p>
+<ngx-spinner defer bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff">
+    <div class="Loader"></div>
+    <p style="font-size: 20px; color: white">Loading...</p>
 </ngx-spinner>
 <span class="accountTemplate">
     <span class="switcherSpan">
@@ -33,10 +29,11 @@
     <span class="publicationTemplate slideAppearAnimation mainTemplate block">
         <h2 class="accountInformationTitle">Мои проекты</h2>
         <span *ngIf="userInformation$|async as userInformation" class="accountPublications">
-            <a [href]="'/create/'+userInformation.publications[indexPublication].idPublication" class="accountPublication"
+            <a [href]="'/create/'+userInformation.publications[indexPublication].idPublication"
+                class="accountPublication"
                 *ngFor="let publication of userInformation.publications; let indexPublication = index">
                 <h2 class="userPublicationTitle">{{indexPublication + 1}}. {{publication.namePublication}}</h2>
-                <img loading="lazy" src="/assets/images/editIcon.svg" alt="" class="functionalIcon">
+                    <img loading="lazy" src="/assets/images/editIcon.svg" alt="" class="functionalIcon">
             </a>
         </span>
     </span>
@@ -57,29 +54,35 @@
                 <h3 class="informationArea">{{userInformation.password}}</h3>
             </div>
         </span>
-        <img loading="lazy" src="/assets/images/editIcon.svg" (click)="changeTemplate('changeInformation')" alt=""
-            class="functionalIcon">
+        <button (click)="changeTemplate('changeInformation')" class="functionalBtn">
+            <img loading="lazy" src="/assets/images/editIcon.svg"  alt=""
+                class="functionalIcon">
+        </button>
     </span>
 </ng-template>
 
 <ng-template #changeAccountInformation>
-    <form *ngIf="userInformation$|async as userInformation" [formGroup]="changeInformationForm" class="informationTemplate">
+    <form *ngIf="userInformation$|async as userInformation" (ngSubmit)="confirmChanges()" [formGroup]="changeInformationForm"
+        class="informationTemplate">
         <span class="accountData">
-            <div class="propertyBlock">
+            <div *ngIf="changeInformationForm.value.nickname!==undefined" class="propertyBlock">
                 <label for="nicknameInput" class="informationTitle">Nickname:</label>
-                <input [(ngModel)]="userInformation.nickname" id="nicknameInput" formControlName="nickname" placeholder="nickname"
+                <input id="nicknameInput" formControlName="nickname" placeholder="nickname"
                     class="accountPasswordInput Input">
             </div>
-            <div *ngIf="userInformation.password" class="propertyBlock">
+            <div *ngIf="changeInformationForm.value.password!==undefined" class="propertyBlock">
                 <label for="passwordInput" class="informationTitle">Password:</label>
-                <input minlength="8" [(ngModel)]="userInformation.password" id="passwordInput" formControlName="password" placeholder="password"
+                <input id="passwordInput" formControlName="password" placeholder="password"
                     class="accountPasswordInput Input">
             </div>
         </span>
         <span class="functionalsBtns">
-            <img loading="lazy" src="/assets/images/acceptIcon.webp" alt="" (click)="confirmChanges()" class="functionalIcon"
-                type="submit">
-            <img loading="lazy" src="/assets/images/cancelIcon.svg" alt="" class="functionalIcon" (click)="acceptInformation()">
+            <button [disabled]="!changeInformationForm.valid" class="functionalBtn" type="submit">
+                <img loading="lazy" src="/assets/images/acceptIcon.webp" alt="" class="functionalIcon" type="submit">
+            </button>
+            <button class="functionalBtn" (click)="cancelChanges()">
+                <img loading="lazy" src="/assets/images/cancelIcon.svg" alt="" class="functionalIcon">
+            </button>
         </span>
     </form>
 </ng-template>

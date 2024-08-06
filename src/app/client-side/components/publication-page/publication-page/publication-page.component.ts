@@ -56,17 +56,16 @@ export class PublicationPageComponent implements OnInit {
         return;
       }
       this.publicationControlService.GETgetPublication(idPublication)
-        .subscribe(
-          resolve => {
+        .subscribe({
+          next:(resolve) => {
             const SERVER_PUBLICATION_DATA_OBJECT: interfaceServerPublicationInformation = resolve as interfaceServerPublicationInformation
             this.pagesIdArray$ = of(SERVER_PUBLICATION_DATA_OBJECT.nameAddModulesArray)
           },
-          error => {
-            console.log(error)
+          error:(error) => {
             this.router.navigateByUrl('/**')
             return
           }
-        )
+    })
     })
   }
   async changePage(pageId: number) {

@@ -37,7 +37,6 @@ export class UserControlService {
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
   POSTcreateUserOnServer(userDataObject: interfaceServerUserData) {
-    console.log(userDataObject)
     return this.httpClient.post(this.apiURL, userDataObject)
   }
   PUTupdateUserOnServer(updateData: interfaceUserChange,userBaseData: interfaceUserServerBaseData) {
@@ -119,9 +118,9 @@ export class UserControlService {
 
   checkLogin(reverse: boolean) {
     if (!reverse) {
-      if (this.getUserIdInLocalStorage()) { console.log('toLogin'); this.router.navigateByUrl('/account') }
+      if (this.getUserIdInLocalStorage()) {  this.router.navigateByUrl('/account') }
       return
     }
-    if (!this.getUserIdInLocalStorage()) { console.log('toLogin'); this.router.navigateByUrl('/login') }
+    if (!this.getUserIdInLocalStorage()) {  this.router.navigateByUrl('/login') }
   }
 }

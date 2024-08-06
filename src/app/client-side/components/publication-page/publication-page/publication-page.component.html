@@ -1,4 +1,4 @@
 <ng-container *ngIf="pagesIdArray$ | async as pagesIdArray">
     <app-dots-bar (pointIdEmitter)="changePage($event)" [dotsArray]="pagesIdArray"></app-dots-bar>
 </ng-container>
-<editor #tinyEditor [apiKey]="editorApiKey" [init]="editorInitObject"/>
+<editor async defer #tinyEditor [apiKey]="editorApiKey" [init]="editorInitObject"/>

@@ -40,7 +40,6 @@ export class TopPageComponent implements AfterViewInit {
           this.changeDetectorRef.detectChanges()
         },
         error:(error) => { 
-          console.log(error)
           this.spinner.hide()
          }
   })

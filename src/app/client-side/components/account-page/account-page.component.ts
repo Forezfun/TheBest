@@ -35,21 +35,17 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
   ) { }
   ngOnInit(): void {
     this.userControlService.checkLogin(true)
-    this.changeInformationForm = this.formBuilder.group({
-      nickname: new FormControl('', [Validators.required]),
-      password: new FormControl('')
-    })
+    this.changeInformationForm = this.formBuilder.group({})
     const SESSION_ID = this.userControlService.getSessionId()
     const USER_ID = this.userControlService.getUserIdInLocalStorage()
     const USER_TYPE = this.userControlService.getUserTypeInLocalStorage()
-    if (!SESSION_ID || !USER_ID || !USER_TYPE) {this.exitFromAccount();return}
+    if (!SESSION_ID || !USER_ID || !USER_TYPE) { this.exitFromAccount(); return }
     this.spinner.show()
     const USER_BASE_DATA = {
       sessionId: SESSION_ID,
       _id: USER_ID
     } as interfaceUserServerBaseData
     if (USER_TYPE === 'email') {
-
       this.userControlService.GETgetUserOnServer(USER_BASE_DATA)
         .subscribe({
           next: (resolve) => {
@@ -60,10 +56,11 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
               password: USER_SERVER_DATA_OBJECT.password,
               publications: USER_SERVER_DATA_OBJECT.publications
             })
+            this.changeInformationForm.addControl('nickname', new FormControl(USER_SERVER_DATA_OBJECT.nickname, [Validators.required, Validators.minLength(1)]))
+            this.changeInformationForm.addControl('password', new FormControl(USER_SERVER_DATA_OBJECT.password, [Validators.required, Validators.minLength(8)]))
             this.spinner.hide()
           },
           error: (error) => {
-            console.log(error)
             this.exitFromAccount()
             this.spinner.hide()
           }
@@ -79,10 +76,10 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
               nickname: USER_SERVER_DATA_OBJECT.nickname,
               publications: USER_SERVER_DATA_OBJECT.publications
             })
+            this.changeInformationForm.addControl('nickname', new FormControl(USER_SERVER_DATA_OBJECT.nickname, [Validators.required, Validators.minLength(3)]))
             this.spinner.hide()
           },
           error: (error) => {
-            console.log(error)
             this.spinner.hide()
           }
         })
@@ -99,11 +96,11 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
     switch (typeTemplate) {
       case 'baseInformation':
         this.opacityChange()
-        setTimeout(() => { this.currentInformationTemplate = this.informationTemplate }, 450);
+        setTimeout(() => { this.currentInformationTemplate = this.informationTemplate }, 500);
         break
       case 'changeInformation':
         this.opacityChange()
-        setTimeout(() => { this.currentInformationTemplate = this.changeInformationTemplate }, 450);
+        setTimeout(() => { this.currentInformationTemplate = this.changeInformationTemplate }, 500);
         break
       case 'accountTemplate':
         this.changeMainTemplate('information')
@@ -114,18 +111,16 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
 
   }
   confirmChanges() {
-    console.log(this.changeInformationForm.value);
     this.changeUserInformation()
   }
-  acceptInformation() {
-    console.log(this.changeInformationForm.value);
+  cancelChanges() {
     this.changeTemplate('baseInformation')
   }
   changeUserInformation() {
     const SESSION_ID = this.userControlService.getSessionId()
     const USER_ID = this.userControlService.getUserIdInLocalStorage()
     const USER_TYPE = this.userControlService.getUserTypeInLocalStorage()
-    if (!SESSION_ID || !USER_ID || !USER_TYPE) {this.exitFromAccount();return}
+    if (!SESSION_ID || !USER_ID || !USER_TYPE) { this.exitFromAccount(); return }
     let USER_UPDATE_DATA: interfaceUserChange = { nickname: this.changeInformationForm.value.nickname }
     this.spinner.show()
     if (USER_TYPE === 'email') {
@@ -144,18 +139,17 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
           this.router.navigateByUrl('/login')
         },
         error: (error) => {
-          console.log(error)
           this.spinner.hide()
         }
       })
 
   }
   opacityChange() {
-    const targetElement = this.elementOfComponent.nativeElement.querySelector('.informationTemplate')
+    const targetElement = this.elementOfComponent.nativeElement.querySelector('.accountCardTemplate')
     this.renderer2.addClass(targetElement, 'opacityAnimation')
     setTimeout(() => {
       this.renderer2.removeClass(targetElement, 'opacityAnimation')
-    }, 800)
+    }, 1000)
   }
   changeMainTemplate(appearedItem: 'information' | 'publications') {
     const currentElem = this.elementOfComponent.nativeElement.querySelector('.mainTemplate')
@@ -174,7 +168,7 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
     const SESSION_ID = this.userControlService.getSessionId()
     const USER_ID = this.userControlService.getUserIdInLocalStorage()
     const USER_TYPE = this.userControlService.getUserTypeInLocalStorage()
-    if (!SESSION_ID || !USER_ID || !USER_TYPE) {this.exitFromAccount();return}
+    if (!SESSION_ID || !USER_ID || !USER_TYPE) { this.exitFromAccount(); return }
     this.spinner.show()
     const USER_BASE_DATA = {
       sessionId: SESSION_ID,
@@ -188,7 +182,6 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
           this.spinner.hide()
         },
         error: (error) => {
-          console.log(error)
           this.spinner.hide()
         }
       })

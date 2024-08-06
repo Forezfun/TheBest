@@ -78,7 +78,6 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
           },
           error: (error) => {
             this.spinner.hide()
-            console.log(error)
           }
         })
     })
@@ -108,7 +107,6 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
           this.router.navigateByUrl('/account')
         },
         error: (error) => {
-          console.log(error)
           this.spinner.hide()
         },
       })
@@ -118,7 +116,6 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
     this.userControlService.GETauthUserOnServer(this.loginForm.value)
       .subscribe({
         next: (resolve) => {
-          console.log(resolve)
           const USER_BASE_DATA = resolve as interfaceUserServerBaseData
           this.userControlService.setSessionId(USER_BASE_DATA.sessionId)
           this.userControlService.setUserIdInLocalStorage(USER_BASE_DATA._id)
@@ -127,7 +124,6 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
           this.router.navigateByUrl('/account')
         },
         error: (error) => {
-          console.log(error)
           if (error.status === 404 || error.status === 403)
             this.handleError('absenceUser')
           this.spinner.hide()
@@ -144,7 +140,6 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
           this.spinner.hide()
         },
         error: (error) => {
-          console.log(error)
           this.spinner.hide()
         },
 
@@ -174,7 +169,6 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
           this.spinner.hide()
         },
         error: (error) => {
-          console.log(error)
           this.spinner.hide()
         }
       })
@@ -241,7 +235,6 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
           this.googleAuthLink$ = of((resolve as { authURL: string }).authURL)
         },
         error: (error) => {
-          console.log(error)
         }
       })
   }
