@@ -2,10 +2,11 @@ import { NavigationPanelComponent } from '../navigation-panel/navigation-panel.c
 import { FormGroup, ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { Component, ViewChild, TemplateRef, AfterViewInit, OnInit, ChangeDetectorRef, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UserControlService } from '../../services/user-control.service';
-import { interfaceUserCookie, interfaceServerUserData, interfaceUser } from '../../services/user-control.service';
-import { Router } from '@angular/router';
+import { UserControlService, interfaceServerUserData, interfaceUserServerBaseData, interfaceUserAuthOrResetPassword } from '../../services/user-control.service';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { GoogleAuthService } from '../../services/google-auth.service';
+import { Observable, of } from 'rxjs';
 type errorType = 'wrongEmail' | 'lengthPassword' | 'coincidencePassword' | 'wrongCode' | 'absenceUser' | 'default' | 'userExists'
 @Component({
   selector: 'app-login-page',
@@ -29,15 +30,19 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
   resetPasswordForm!: FormGroup;
   loginSpanHtmlElement!: HTMLSpanElement
   userError: string = ' '
+  googleAuthLink$?: Observable<string>;
   private resetCode!: string
   constructor(private changeDetectorRef: ChangeDetectorRef,
     private elementOfComponent: ElementRef,
     private userControlService: UserControlService,
     private router: Router,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private googleAuthService: GoogleAuthService,
+    private routerObservable: ActivatedRoute,
   ) { }
   ngOnInit(): void {
     this.userControlService.checkLogin(false)
+    this.googleRequestUrl()
     this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.email, Validators.required]),
       password: new FormControl('', [Validators.minLength(8), Validators.required]),
@@ -57,6 +62,27 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
       resetPassword: new FormControl('', [Validators.minLength(8), Validators.required]),
       resetPasswordCheck: new FormControl('', Validators.required),
     });
+    const routerSub = this.routerObservable.queryParams.subscribe(params => {
+      const userCode = params['code']
+      if (!userCode) return
+      this.spinner.show()
+      this.googleAuthService.GETauthUserOnServer(userCode)
+        .subscribe({
+          next: (resolve) => {
+            const USER_DATA = resolve as interfaceUserServerBaseData
+            this.userControlService.setSessionId(USER_DATA.sessionId)
+            this.userControlService.setUserIdInLocalStorage(USER_DATA._id)
+            this.userControlService.setUserTypeInLocalStorage('google')
+            this.spinner.hide()
+            this.router.navigateByUrl('/account')
+          },
+          error: (error) => {
+            this.spinner.hide()
+            console.log(error)
+          }
+        })
+    })
+    routerSub.unsubscribe()
   }
   ngAfterViewInit(): void {
     this.currentTemplate = this.loginTemplate;
@@ -65,42 +91,38 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
   }
   registrateUser() {
     this.spinner.show()
-    const OBJECT_FOR_REQUEST: interfaceServerUserData = {
+    let OBJECT_FOR_REQUEST: interfaceServerUserData = {
       email: this.registrationForm.value.email,
-      password: this.registrationForm.value.password,
       nickname: this.registrationForm.value.nickname,
+      password: this.registrationForm.value.password,
       publications: []
     }
     this.userControlService.POSTcreateUserOnServer(OBJECT_FOR_REQUEST)
       .subscribe({
-        next:(resolve) => {
-          const USER_SERVER_DATA_OBJECT: interfaceUserCookie = resolve as interfaceUserCookie
-          this.userControlService.setUserInCookies({
-            email: OBJECT_FOR_REQUEST.email,
-            password: OBJECT_FOR_REQUEST.password,
-            _id: USER_SERVER_DATA_OBJECT._id
-          })
+        next: (resolve) => {
+          const USER_SERVER_DATA_OBJECT = resolve as interfaceUserServerBaseData
+          this.userControlService.setSessionId(USER_SERVER_DATA_OBJECT.sessionId)
+          this.userControlService.setUserIdInLocalStorage(USER_SERVER_DATA_OBJECT._id)
+          this.userControlService.setUserTypeInLocalStorage('email')
           this.spinner.hide()
           this.router.navigateByUrl('/account')
         },
-        error:(error) => { 
-          console.log(error) 
+        error: (error) => {
+          console.log(error)
           this.spinner.hide()
         },
-  })
+      })
   }
   loginUser() {
     this.spinner.show()
-    this.userControlService.GETgetUserOnServer(this.loginForm.value)
+    this.userControlService.GETauthUserOnServer(this.loginForm.value)
       .subscribe({
         next: (resolve) => {
           console.log(resolve)
-          const USER_SERVER_DATA_OBJECT = resolve as interfaceUserCookie
-          this.userControlService.setUserInCookies({
-            email: USER_SERVER_DATA_OBJECT.email,
-            password: USER_SERVER_DATA_OBJECT.password,
-            _id: USER_SERVER_DATA_OBJECT._id
-          })
+          const USER_BASE_DATA = resolve as interfaceUserServerBaseData
+          this.userControlService.setSessionId(USER_BASE_DATA.sessionId)
+          this.userControlService.setUserIdInLocalStorage(USER_BASE_DATA._id)
+          this.userControlService.setUserTypeInLocalStorage('email')
           this.spinner.hide()
           this.router.navigateByUrl('/account')
         },
@@ -118,7 +140,7 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
     this.userControlService.POSTrequestResetCode(this.enterEmailForm.value.email)
       .subscribe({
         next: (resolve) => {
-          this.resetCode = (resolve as {resetCode:string}).resetCode
+          this.resetCode = (resolve as { resetCode: string }).resetCode
           this.spinner.hide()
         },
         error: (error) => {
@@ -140,23 +162,22 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
       this.handleError('coincidencePassword')
       return
     }
-    const DATA_OBJECT: interfaceUser = {
+    const CHANGE_DATA: interfaceUserAuthOrResetPassword = {
       email: this.enterEmailForm.value.email,
-      password: this.resetPasswordForm.value.resetPassword,
-      resetPassword: this.resetPasswordForm.value.resetPassword,
+      password: this.resetPasswordForm.value.resetPassword
     }
-    this.spinner.hide()
-    this.userControlService.PUTupdateUserPasswordOnServer(DATA_OBJECT)
+    this.spinner.show()
+    this.userControlService.PUTupdateUserPasswordOnServer(CHANGE_DATA)
       .subscribe({
-        next:() => {
+        next: () => {
           this.changeTemplate('login')
           this.spinner.hide()
         },
-        error:(error) => { 
+        error: (error) => {
           console.log(error)
           this.spinner.hide()
-         }
-  })
+        }
+      })
   }
   opacityAnimation() {
     this.loginSpanHtmlElement.classList.add('opacityAnimationClass')
@@ -213,4 +234,16 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
       event.preventDefault();
     }
   }
+  googleRequestUrl() {
+    this.googleAuthService.GETgetAuthUrl()
+      .subscribe({
+        next: (resolve) => {
+          this.googleAuthLink$ = of((resolve as { authURL: string }).authURL)
+        },
+        error: (error) => {
+          console.log(error)
+        }
+      })
+  }
+
 }

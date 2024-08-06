@@ -1,19 +1,17 @@
-<ngx-spinner
-  bdColor="rgba(51,51,51,0.8)"
-  size="medium"
-  color="#fff"
->
-<div class="Loader"></div>
-<p style="font-size: 20px; color: white">Loading...</p>
+<ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff">
+  <div class="Loader"></div>
+  <p style="font-size: 20px; color: white">Loading...</p>
 </ngx-spinner>
 <img loading="lazy" src="/assets/images/ipad.webp" alt=":3" class="ipad decorationObject" />
 <span class="loginSpan">
   <h2 class="loginTitle">SIGN IN</h2>
   <ng-container *ngTemplateOutlet="currentTemplate"></ng-container>
-  <img loading="lazy" class="loginGoogle" src="/assets/images/googleIcon.svg" alt=":3" />
+  <a *ngIf="googleAuthLink$ | async as googleAuthLink" class="loginGoogle" [href]="googleAuthLink">
+    <img  loading="lazy" class="loginGoogleIcon" src="/assets/images/googleIcon.svg" alt=":3" />
+  </a>
   <div class="errorScreen">{{userError}}</div>
 </span>
-<img loading="lazy" src="/assets/images/iphone15.webp"  alt=":3" class="iphone decorationObject" />
+<img loading="lazy" src="/assets/images/iphone15.webp" alt=":3" class="iphone decorationObject" />
 <ng-template #login>
   <form class="form" [formGroup]="loginForm" (ngSubmit)="loginUser()">
     <span class="loginFields">
@@ -27,7 +25,8 @@
       <div>
         <div class="horizontalSpan">
           <label for="password" class="titleField">PASSWORD</label>
-          <input (keydown)="preventSpace($event)" type="password" id="password" formControlName="password" class="inputField" />
+          <input (keydown)="preventSpace($event)" type="password" id="password" formControlName="password"
+            class="inputField" />
         </div>
         <hr />
       </div>
@@ -43,39 +42,42 @@
   <form class="form" [formGroup]="registrationForm" (ngSubmit)="registrateUser()">
     <span class="loginFields">
       <div>
-      <div class="horizontalSpan">
-        <label for="email" class="titleField">E-MAIL</label>
-        <input (keydown)="preventSpace($event)" type="email" id="email" required formControlName="email" class="inputField" />
-      </div>
-      <hr />
+        <div class="horizontalSpan">
+          <label for="email" class="titleField">E-MAIL</label>
+          <input (keydown)="preventSpace($event)" type="email" id="email" required formControlName="email"
+            class="inputField" />
+        </div>
+        <hr />
       </div>
       <div>
-      <div class="horizontalSpan">
-        <label for="password" class="titleField">PASSWORD</label>
-        <input (keydown)="preventSpace($event)" type="password" id="password" formControlName="password" class="inputField" />
-      </div>
-      <hr />
+        <div class="horizontalSpan">
+          <label for="password" class="titleField">PASSWORD</label>
+          <input (keydown)="preventSpace($event)" type="password" id="password" formControlName="password"
+            class="inputField" />
+        </div>
+        <hr />
       </div>
       <div>
         <div class="horizontalSpan">
           <label for="nickname" class="titleField">NICKNAME</label>
-          <input (keydown)="preventSpace($event)" type="text" id="nickname" formControlName="nickname" class="inputField" />
+          <input (keydown)="preventSpace($event)" type="text" id="nickname" formControlName="nickname"
+            class="inputField" />
         </div>
         <hr />
-        </div>
+      </div>
     </span>
-      <button class="changeTemplateBtn" type="button" (click)="changeTemplate('login')">LOGIN</button>
+    <button class="changeTemplateBtn" type="button" (click)="changeTemplate('login')">LOGIN</button>
     <button [disabled]="!registrationForm.valid" class="btnSubmit" type="submit">REGISTRATE</button>
   </form>
 </ng-template>
 <ng-template #enterEmail>
   <form class="form" [formGroup]="enterEmailForm" (ngSubmit)="requestResetCode()">
     <div>
-    <div class="horizontalSpan">
-      <label for="email" class="titleField">E-MAIL</label>
-      <input (keydown)="preventSpace($event)" type="email" id="email" formControlName="email" class="inputField" />
-    </div>
-    <hr />
+      <div class="horizontalSpan">
+        <label for="email" class="titleField">E-MAIL</label>
+        <input (keydown)="preventSpace($event)" type="email" id="email" formControlName="email" class="inputField" />
+      </div>
+      <hr />
     </div>
     <button class="changeTemplateBtn" type="button" (click)="changeTemplate('login')">I KNOW MY PASSWORD</button>
     <button [disabled]="!enterEmailForm.valid" class="btnSubmit" type="submit">REQUEST</button>
@@ -86,7 +88,8 @@
   <form class="form" [formGroup]="enterCodeForm" (ngSubmit)="matchCode()">
     <div class="verticalSpan">
       <label for="code" class="titleField">CODE</label>
-      <input (keydown)="preventSpace($event)" maxlength="6" type="text" id="code" formControlName="code" class="inputFieldCode" />
+      <input (keydown)="preventSpace($event)" maxlength="6" type="text" id="code" formControlName="code"
+        class="inputFieldCode" />
     </div>
     <div class="changeTemplateNavigation">
       <button class="changeTemplateBtn" type="button" (click)="changeTemplate('login')">I KNOW</button>
@@ -102,14 +105,16 @@
       <div>
         <div class="horizontalSpan">
           <label for="resetPassword" class="titleField">PASSWORD</label>
-          <input (keydown)="preventSpace($event)" type="password" id="resetPassword" formControlName="resetPassword" class="inputField" />
+          <input (keydown)="preventSpace($event)" type="password" id="resetPassword" formControlName="resetPassword"
+            class="inputField" />
         </div>
         <hr />
       </div>
       <div>
         <div class="horizontalSpan">
           <label for="check" class="titleField">CHECK</label>
-          <input (keydown)="preventSpace($event)" type="password" id="check" formControlName="resetPasswordCheck" class="inputField" />
+          <input (keydown)="preventSpace($event)" type="password" id="check" formControlName="resetPasswordCheck"
+            class="inputField" />
         </div>
         <hr />
       </div>

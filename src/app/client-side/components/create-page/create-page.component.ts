@@ -83,7 +83,9 @@ export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
           next: (resolve) => {
             this.typePublicationEdit = 'Редактировать'
             const PUBLICATION_SERVER_DATA_OBJECT = resolve as interfaceServerPublicationInformation
-            if (PUBLICATION_SERVER_DATA_OBJECT.author !== this.userControlService.getUserInCookies()!._id) {
+            const USER_ID = this.userControlService.getUserIdInLocalStorage()
+            if(!USER_ID)return
+            if (PUBLICATION_SERVER_DATA_OBJECT.author !== USER_ID) {
               this.router.navigateByUrl('/**');
               return;
             }
@@ -149,9 +151,9 @@ ngOnDestroy(): void {
 }
 onSubmit() {
   let PUBLICATION_DATA_OBJECT = { ...this.createForm.value } as interfacePublicationInformation;
-  const USER_COOKIE_DATA = this.userControlService.getUserInCookies()
-  if (!USER_COOKIE_DATA) return
-  PUBLICATION_DATA_OBJECT.author = USER_COOKIE_DATA?._id
+  const USER_ID = this.userControlService.getUserIdInLocalStorage()
+  if (!USER_ID) return
+  PUBLICATION_DATA_OBJECT.author = USER_ID
   PUBLICATION_DATA_OBJECT.nameAddModulesArray = PUBLICATION_DATA_OBJECT.nameAddModulesArray.filter(page =>
     page.namePage && page.codePage
   );

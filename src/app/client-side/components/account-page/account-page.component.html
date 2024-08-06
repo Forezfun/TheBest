@@ -52,7 +52,7 @@
                 <h2 class="informationTitle">Email:</h2>
                 <h3 class="informationArea">{{userInformation.email}}</h3>
             </div>
-            <div class="propertyBlock">
+            <div *ngIf="userInformation.password" class="propertyBlock">
                 <h2 class="informationTitle">Password:</h2>
                 <h3 class="informationArea">{{userInformation.password}}</h3>
             </div>
@@ -63,16 +63,16 @@
 </ng-template>
 
 <ng-template #changeAccountInformation>
-    <form [formGroup]="changeInformationForm" class="informationTemplate">
+    <form *ngIf="userInformation$|async as userInformation" [formGroup]="changeInformationForm" class="informationTemplate">
         <span class="accountData">
             <div class="propertyBlock">
                 <label for="nicknameInput" class="informationTitle">Nickname:</label>
-                <input id="nicknameInput" formControlName="nickname" placeholder="nickname"
+                <input [(ngModel)]="userInformation.nickname" id="nicknameInput" formControlName="nickname" placeholder="nickname"
                     class="accountPasswordInput Input">
             </div>
-            <div class="propertyBlock">
+            <div *ngIf="userInformation.password" class="propertyBlock">
                 <label for="passwordInput" class="informationTitle">Password:</label>
-                <input id="passwordInput" formControlName="password" placeholder="password"
+                <input minlength="8" [(ngModel)]="userInformation.password" id="passwordInput" formControlName="password" placeholder="password"
                     class="accountPasswordInput Input">
             </div>
         </span>

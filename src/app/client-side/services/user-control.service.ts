@@ -1,22 +1,19 @@
 import { Injectable } from '@angular/core';
-import { CookieService } from 'ngx-cookie-service';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { interfacePublicationInformation } from './publication-control.service';
 import { Router } from '@angular/router';
-import { catchError, throwError } from 'rxjs';
-
-export interface interfaceUserCookie extends interfaceUser {
+import { PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+export interface interfaceUserServerBaseData {
+  sessionId: string;
   _id: string;
 }
-export interface interfaceUser {
+export interface interfaceUserChange {
+  nickname: string;
+  password?: string;
+}
+export interface interfaceUserAuthOrResetPassword {
   email: string;
   password: string;
-  resetPassword?:string;
-}
-export interface interfaceChangePassword{
-  email:string;
-  nickname:string;
-  resetPassword:string;
 }
 export interface interfaceServerUserPublication {
   namePublication: string;
@@ -24,9 +21,10 @@ export interface interfaceServerUserPublication {
 }
 export interface interfaceServerUserData {
   email: string;
-  password: string;
+  password?: string;
   nickname: string;
-  publications: interfaceServerUserPublication[]
+  publications: interfaceServerUserPublication[];
+  sessionId?: string;
 }
 @Injectable({
   providedIn: 'root',
@@ -34,65 +32,96 @@ export interface interfaceServerUserData {
 export class UserControlService {
   private apiURL = "http://localhost:8010/proxy/user/"
   constructor(
-    private cookieService: CookieService,
     private httpClient: HttpClient,
-    private router: Router
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) { }
   POSTcreateUserOnServer(userDataObject: interfaceServerUserData) {
     console.log(userDataObject)
     return this.httpClient.post(this.apiURL, userDataObject)
   }
-  PUTupdateUserOnServer(userDataObject: interfaceUser) {
-    return this.httpClient.put(`${this.apiURL}`, userDataObject)
-      .pipe(
-        catchError(err => {
-            this.deleteUserInCookies()
-          return throwError(err);
-        })
-      )
+  PUTupdateUserOnServer(updateData: interfaceUserChange,userBaseData: interfaceUserServerBaseData) {
+    const data = { ...updateData, _id: userBaseData._id, sessionId: userBaseData.sessionId }
+    return this.httpClient.put(`${this.apiURL}changeinformation`, data)
   }
-  PUTupdateUserPasswordOnServer(userDataObject: interfaceUser) {
-    userDataObject.resetPassword=userDataObject.password
-    return this.httpClient.put(`${this.apiURL}change/`, userDataObject)
-    .pipe(
-      catchError(err => {
-          this.deleteUserInCookies()    
-        return throwError(err);
-      })
-    )
+  PUTupdateUserPasswordOnServer(userDataObject: interfaceUserAuthOrResetPassword) {
+    return this.httpClient.put(`${this.apiURL}changepassword`, userDataObject)
   }
-  DELETEdeleteUserOnServer(USER_DATA_OBJECT:interfaceUserCookie) {
+  DELETEdeleteUserOnServer(userBaseData: interfaceUserServerBaseData) {
     const params = new HttpParams()
-    .set('email',USER_DATA_OBJECT.email)
-    .set('password',USER_DATA_OBJECT.password)
-    return this.httpClient.delete(`${this.apiURL}`,{params})
+      .set('userId', userBaseData._id)
+      .set('sessionId', userBaseData.sessionId)
+    return this.httpClient.delete(`${this.apiURL}`, { params })
   }
-  GETgetUserOnServer(paramsObject: interfaceUser) {
+  GETauthUserOnServer(userDataObject: interfaceUserAuthOrResetPassword) {
     const params = new HttpParams()
-      .set('email', paramsObject.email)
-      .set('passwor', paramsObject.password);
+      .set('email', userDataObject.email)
+      .set('password', userDataObject.password);
+    return this.httpClient.get(`${this.apiURL}auth`, { params })
+  }
+  GETgetUserOnServer(userBaseData: interfaceUserServerBaseData) {
+    const params = new HttpParams()
+      .set('userId', userBaseData._id)
+      .set('sessionId', userBaseData.sessionId);
     return this.httpClient.get(`${this.apiURL}`, { params })
   }
   POSTrequestResetCode(email: string) {
-    return this.httpClient.post(`${this.apiURL}code/`, { email: email })
+    return this.httpClient.post(`${this.apiURL}code`, { email: email })
   }
-  setUserInCookies(cookieUserData: interfaceUserCookie) {
-    this.cookieService.set('user', JSON.stringify(cookieUserData), { expires: 7, path: '/' })
+  setUserIdInLocalStorage(userId: string) {
+    if (isPlatformBrowser(this.platformId)) { localStorage.setItem('userId', userId) }
   }
-  getUserInCookies() {
-    const USER_COOKIE_DATA = this.cookieService.get('user')
-    if (!USER_COOKIE_DATA) return undefined
-    return JSON.parse(USER_COOKIE_DATA) as interfaceUserCookie
+  getUserIdInLocalStorage() {
+    if (isPlatformBrowser(this.platformId)) {
+      const USER_ID = localStorage.getItem('userId')
+      return !USER_ID ? undefined : USER_ID
+    } else {
+      return undefined
+    }
   }
-  deleteUserInCookies() {
-    this.cookieService.delete('user', '/')
+  deleteUserIdInLocalStorage() {
+    if (isPlatformBrowser(this.platformId)) { localStorage.removeItem('userId') }
+  }
+  getUserTypeInLocalStorage(){
+    if (isPlatformBrowser(this.platformId)) {
+      const USER_ID = localStorage.getItem('userType')
+      return !USER_ID ? undefined : USER_ID
+    } else {
+      return undefined
+    }
+  }
+  setUserTypeInLocalStorage(userType: 'google'|'email') {
+    if (isPlatformBrowser(this.platformId)) { localStorage.setItem('userType', userType) }
+  }
+  deleteUserTypeInLocalStorage() {
+    if (isPlatformBrowser(this.platformId)) { localStorage.removeItem('userType') }
+  }
+  getSessionId() {
+    if (isPlatformBrowser(this.platformId)) {
+      const sessionData = sessionStorage.getItem('sessionId')
+      return !sessionData ? undefined : sessionData
+    } else {
+      return undefined
+    }
+  }
+  setSessionId(sessionId: string) { 
+    if (isPlatformBrowser(this.platformId)) { sessionStorage.setItem('sessionId', sessionId) }
+  }
+  deleteSessionID() {
+    if (isPlatformBrowser(this.platformId)) {sessionStorage.removeItem('sessionId')}
+  }
+  deleteLocalUser() {
+    this.deleteSessionID()
+    this.deleteUserIdInLocalStorage()
+    this.deleteUserTypeInLocalStorage()
     this.router.navigateByUrl('/login')
   }
+
   checkLogin(reverse: boolean) {
     if (!reverse) {
-      if (this.getUserInCookies()){console.log('toLogin');this.router.navigateByUrl('/account')}
+      if (this.getUserIdInLocalStorage()) { console.log('toLogin'); this.router.navigateByUrl('/account') }
       return
     }
-    if (!this.getUserInCookies()){console.log('toLogin');this.router.navigateByUrl('/login')}
+    if (!this.getUserIdInLocalStorage()) { console.log('toLogin'); this.router.navigateByUrl('/login') }
   }
 }

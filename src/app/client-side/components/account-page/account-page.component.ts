@@ -1,15 +1,16 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, TemplateRef, ViewChild } from '@angular/core';
 import { NavigationPanelComponent } from '../navigation-panel/navigation-panel.component';
 import { CommonModule, NgFor, NgTemplateOutlet } from '@angular/common';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { interfaceServerUserData, interfaceUserCookie, UserControlService } from '../../services/user-control.service';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { interfaceServerUserData, interfaceUserChange, interfaceUserServerBaseData, UserControlService } from '../../services/user-control.service';
 import { Router } from '@angular/router';
-import {Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { GoogleAuthService } from '../../services/google-auth.service';
 @Component({
   selector: 'app-account-page',
   standalone: true,
-  imports: [NavigationPanelComponent, NgFor, NgTemplateOutlet, ReactiveFormsModule,CommonModule,NgxSpinnerModule],
+  imports: [NavigationPanelComponent, NgFor, NgTemplateOutlet, ReactiveFormsModule, CommonModule, NgxSpinnerModule],
   templateUrl: './account-page.component.html',
   styleUrl: './account-page.component.scss'
 })
@@ -29,34 +30,64 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
     private elementOfComponent: ElementRef,
     private userControlService: UserControlService,
     private router: Router,
-    private spinner:NgxSpinnerService
-  ) {}
+    private spinner: NgxSpinnerService,
+    private googleAuthService: GoogleAuthService
+  ) { }
   ngOnInit(): void {
     this.userControlService.checkLogin(true)
     this.changeInformationForm = this.formBuilder.group({
-      nickname: new FormControl(''),
+      nickname: new FormControl('', [Validators.required]),
       password: new FormControl('')
     })
-    const userDataObject = this.userControlService.getUserInCookies()
-    console.log(userDataObject)
-    if(!userDataObject)return
+    const SESSION_ID = this.userControlService.getSessionId()
+    const USER_ID = this.userControlService.getUserIdInLocalStorage()
+    const USER_TYPE = this.userControlService.getUserTypeInLocalStorage()
+    if (!SESSION_ID || !USER_ID || !USER_TYPE) {this.exitFromAccount();return}
     this.spinner.show()
-    this.userControlService.GETgetUserOnServer(userDataObject)
-    .subscribe({
-      next:(resolve)=>{
-        const USER_SERVER_DATA_OBJECT:interfaceServerUserData = resolve as interfaceServerUserData
-        this.userInformation$=of({
-          email:USER_SERVER_DATA_OBJECT.email,
-          nickname:USER_SERVER_DATA_OBJECT.nickname,
-          password:USER_SERVER_DATA_OBJECT.password,
-          publications:USER_SERVER_DATA_OBJECT.publications
+    const USER_BASE_DATA = {
+      sessionId: SESSION_ID,
+      _id: USER_ID
+    } as interfaceUserServerBaseData
+    if (USER_TYPE === 'email') {
+
+      this.userControlService.GETgetUserOnServer(USER_BASE_DATA)
+        .subscribe({
+          next: (resolve) => {
+            const USER_SERVER_DATA_OBJECT: interfaceServerUserData = resolve as interfaceServerUserData
+            this.userInformation$ = of({
+              email: USER_SERVER_DATA_OBJECT.email,
+              nickname: USER_SERVER_DATA_OBJECT.nickname,
+              password: USER_SERVER_DATA_OBJECT.password,
+              publications: USER_SERVER_DATA_OBJECT.publications
+            })
+            this.spinner.hide()
+          },
+          error: (error) => {
+            console.log(error)
+            this.exitFromAccount()
+            this.spinner.hide()
+          }
         })
-      },
-      error:(error)=>{
-        console.log(error)
-        this.spinner.hide()
-      }
-  })
+
+    } else {
+      this.googleAuthService.GETgetUserDataOnServer(USER_BASE_DATA)
+        .subscribe({
+          next: (resolve) => {
+            const USER_SERVER_DATA_OBJECT: interfaceServerUserData = resolve as interfaceServerUserData
+            this.userInformation$ = of({
+              email: USER_SERVER_DATA_OBJECT.email,
+              nickname: USER_SERVER_DATA_OBJECT.nickname,
+              publications: USER_SERVER_DATA_OBJECT.publications
+            })
+            this.spinner.hide()
+          },
+          error: (error) => {
+            console.log(error)
+            this.spinner.hide()
+          }
+        })
+
+    }
   }
   ngAfterViewInit(): void {
     this.currentInformationTemplate = this.informationTemplate
@@ -90,29 +121,34 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
     console.log(this.changeInformationForm.value);
     this.changeTemplate('baseInformation')
   }
-  changeUserInformation(){
-    const USER_COOKIE_DATA = this.userControlService.getUserInCookies()
-    if(!USER_COOKIE_DATA)return
-    let USER_SERVER_DATA_OBJECT = this.changeInformationForm.value
-    USER_SERVER_DATA_OBJECT.email=USER_COOKIE_DATA.email
+  changeUserInformation() {
+    const SESSION_ID = this.userControlService.getSessionId()
+    const USER_ID = this.userControlService.getUserIdInLocalStorage()
+    const USER_TYPE = this.userControlService.getUserTypeInLocalStorage()
+    if (!SESSION_ID || !USER_ID || !USER_TYPE) {this.exitFromAccount();return}
+    let USER_UPDATE_DATA: interfaceUserChange = { nickname: this.changeInformationForm.value.nickname }
     this.spinner.show()
-    this.userControlService.PUTupdateUserOnServer(USER_SERVER_DATA_OBJECT)
-    .subscribe({
-      next:(resolve)=>{
-        const USER_SERVER_DATA_OBJECT:interfaceUserCookie=resolve as interfaceUserCookie
-        this.userControlService.setUserInCookies({
-          email:USER_SERVER_DATA_OBJECT.email,
-          password:USER_SERVER_DATA_OBJECT.password,
-          _id:USER_SERVER_DATA_OBJECT._id
-        })
-        this.spinner.hide()
-        this.router.navigateByUrl('/login')
-      },
-      error:(error)=>{
-        console.log(error)
-        this.spinner.hide()
+    if (USER_TYPE === 'email') {
+      USER_UPDATE_DATA = { ...USER_UPDATE_DATA, password: this.changeInformationForm.value.password }
+    }
+    const HANDLE_SERVICE = USER_TYPE === 'email' ? this.userControlService : this.googleAuthService
+    HANDLE_SERVICE.PUTupdateUserOnServer(USER_UPDATE_DATA,
+      {
+        sessionId: SESSION_ID,
+        _id: USER_ID
       }
-  })
+    )
+      .subscribe({
+        next: (resolve) => {
+          this.spinner.hide()
+          this.router.navigateByUrl('/login')
+        },
+        error: (error) => {
+          console.log(error)
+          this.spinner.hide()
+        }
+      })
+
   }
   opacityChange() {
     const targetElement = this.elementOfComponent.nativeElement.querySelector('.informationTemplate')
@@ -131,24 +167,30 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
       this.renderer2.addClass(currentElem, 'slideAppearAnimation')
     }, 200)
   }
-  exitFromAccount(){
-    this.userControlService.deleteUserInCookies()
-    this.router.navigateByUrl('/login')
+  exitFromAccount() {
+    this.userControlService.deleteLocalUser()
   }
-  deleteAccount(){
-    const USER_COOKIE_DATA = this.userControlService.getUserInCookies()
-    if(!USER_COOKIE_DATA)return
+  deleteAccount() {
+    const SESSION_ID = this.userControlService.getSessionId()
+    const USER_ID = this.userControlService.getUserIdInLocalStorage()
+    const USER_TYPE = this.userControlService.getUserTypeInLocalStorage()
+    if (!SESSION_ID || !USER_ID || !USER_TYPE) {this.exitFromAccount();return}
     this.spinner.show()
-    this.userControlService.DELETEdeleteUserOnServer(USER_COOKIE_DATA)
-    .subscribe({
-      next:()=>{
+    const USER_BASE_DATA = {
+      sessionId: SESSION_ID,
+      _id: USER_ID
+    } as interfaceUserServerBaseData
+    const HANDLE_SERVICE = USER_TYPE === 'email' ? this.userControlService : this.googleAuthService
+    HANDLE_SERVICE.DELETEdeleteUserOnServer(USER_BASE_DATA)
+      .subscribe({
+        next: () => {
           this.exitFromAccount()
           this.spinner.hide()
-      },
-      error:(error)=>{
-        console.log(error)
-        this.spinner.hide()
-      }
-  })
+        },
+        error: (error) => {
+          console.log(error)
+          this.spinner.hide()
+        }
+      })
   }
 }

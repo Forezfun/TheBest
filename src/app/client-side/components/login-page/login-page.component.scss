@@ -1,5 +1,5 @@
-@import "styles.scss";
-
+@import "base.scss";
+@import "spinner.scss";
 * {
     font-family: $fontFamily;
 }
@@ -104,12 +104,16 @@
     width: 100%;
 }
 .loginGoogle {
-    width: 15%;
-    border-radius: 100%;
-    box-shadow: $cardShadow;
+    width:75px;
+    height:75px;
+    background:none;
     cursor: pointer;
 }
-
+.loginGoogleIcon{
+    width:100%;
+    border-radius: 100%;
+    box-shadow: $cardShadow;
+}
 .decorationObject {
     position: absolute;
     height: 70vh;
@@ -137,6 +141,7 @@
     color:red;
     font-size: 12.5px;
 }
+
 @keyframes moveFromLeft1920 {
     0% {
         left: -200px;

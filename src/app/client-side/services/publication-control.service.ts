@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { UserControlService } from './user-control.service';
 export interface interfacePageInformation {
   namePage: string;
   codePage: string;
@@ -21,7 +20,7 @@ export interface interfaceServerPublicationInformation extends interfacePublicat
 })
 export class PublicationControlService {
   private apiURL = 'http://localhost:8010/proxy/publication/'
-  constructor(private httpClient: HttpClient, private userControlService: UserControlService) { }
+  constructor(private httpClient: HttpClient) { }
   POSTcreatePublication(informationPublication: interfacePublicationInformation) {
     return this.httpClient.post(this.apiURL, informationPublication)
   }
