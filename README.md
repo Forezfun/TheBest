@@ -3,13 +3,13 @@
 ## Установка библиотек
 1. Откройте главную директорию проекта в терминале
 2. Скопируйте одним текстом все команды ниже и выполните их в терминале
-`npm install --force
-cd src/app/server-side
-npm install
-cd ../client-side
-npm install
-cd ../../../
-`
+`npm install --force`
+`cd src/app/server-side`
+`npm install`
+`cd ../client-side`
+`npm install`
+`cd ../../../`
+
 ## Запуск проекта
 ### Запуск из главной директории
 1. Откройте главную директорию проекта в терминале
