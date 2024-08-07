@@ -1,10 +1,10 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, Renderer2, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit,ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { NgFor, NgTemplateOutlet, NgIf } from '@angular/common';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators, ValidatorFn, ValidationErrors, AbstractControl, FormArray, FormBuilder } from '@angular/forms';
 import { EditorComponent } from '@tinymce/tinymce-angular';
 import { ImageControlService } from '../../services/image-control.service';
 import { NavigationPanelComponent } from '../navigation-panel/navigation-panel.component';
-import { PublicationControlService, interfacePageInformation, interfacePublicationInformation, interfaceServerPublicationInformation } from '../../services/publication-control.service';
+import { PublicationControlService, interfacePublicationInformation, interfaceServerPublicationInformation } from '../../services/publication-control.service';
 import { HttpClientModule } from '@angular/common/http';
 import { UserControlService } from '../../services/user-control.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -18,9 +18,14 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
   templateUrl: './create-page.component.html',
   styleUrl: './create-page.component.scss'
 })
-export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('tinyEditor') tinyEditor!: EditorComponent;
-  editorApiKey = "pa2wb6quye1a8vzzmn5v79fq0iwcr78l02u3tohb4401tufu"
+export class CreatePageComponent implements OnInit, AfterViewInit {
+  @ViewChild('tinyEditor') private tinyEditor!: EditorComponent;
+  private chooseIconElement!: HTMLImageElement
+  private editorHtmlElement!: HTMLDivElement
+  private choosedImage!: HTMLImageElement
+  private routerSub!: Subscription
+  private currentIdPushedInput: number = 0
+  editorApiKey = "kted646h6qo85jem7djygvvhmdpjf854nwra0znuhtj0isho"
   editorInitObject: EditorComponent['init'] = {
     selector: 'textarea#tinyEditor',
     resize: false,
@@ -37,15 +42,10 @@ export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
     autosave_retention: '1m',
     autosave_restore_when_empty: false
   }
-  currentIdPushedInput: number = 0
   createForm!: FormGroup;
-  chooseIconElement!: HTMLImageElement
-  editorHtmlElement!: HTMLDivElement
-  choosedImage!: HTMLImageElement
-  idItem!: string
-  routerSub!: Subscription
   idPublication!: string;
   typePublicationEdit: 'Опубликовать' | 'Редактировать' = 'Опубликовать'
+
   constructor(
     private renderer2: Renderer2,
     private elementOfComponent: ElementRef,
@@ -65,6 +65,7 @@ export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
       return control.value.length > minLength ? null : { length: control.value.length }
     };
   }
+
   ngOnInit(): void {
     this.createForm = new FormGroup({
       title: new FormControl<string>('', Validators.required),
@@ -108,6 +109,13 @@ export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
     })
     this.routerSub.unsubscribe()
   }
+  ngAfterViewInit(): void {
+    this.chooseIconElement = this.elementOfComponent.nativeElement.querySelector('.chooseImageIcon') as HTMLImageElement
+      this.editorHtmlElement = this.elementOfComponent.nativeElement.querySelector('editor') as HTMLDivElement
+      this.choosedImage = this.elementOfComponent.nativeElement.querySelector('.choosedImg') as HTMLImageElement
+      this.changeDetectorRef.detectChanges()
+  }
+
   input(input: Event) {
     input.preventDefault()
   }
@@ -117,18 +125,10 @@ export class CreatePageComponent implements OnInit, AfterViewInit, OnDestroy {
       codePage: ['']
     });
   }
-  deletePublication() {
-    this.spinner.show()
-    this.publicationControlService.DELETEdeletePublication(this.idPublication)
-      .subscribe({
-        next:() => {
-          this.spinner.hide()
-        this.router.navigateByUrl('/account')
-      },
-        error:(error) => {
-          this.spinner.hide()
-        }
-  })
+addNameAddModule() {
+  const addPagesPublication = this.createForm.get('nameAddModulesArray') as FormArray;
+  addPagesPublication.push(this.createNameModule());
+  this.setNameModulesArray(addPagesPublication.value);
 }
 setNameModulesArray(modules: any[]) {
   const modulesArray = this.createForm.get('nameAddModulesArray') as FormArray;
@@ -136,16 +136,6 @@ setNameModulesArray(modules: any[]) {
   modules.forEach(module => {
     modulesArray.push(this.formBuilder.group(module));
   });
-}
-
-ngAfterViewInit(): void {
-  this.chooseIconElement = this.elementOfComponent.nativeElement.querySelector('.chooseImageIcon') as HTMLImageElement
-    this.editorHtmlElement = this.elementOfComponent.nativeElement.querySelector('editor') as HTMLDivElement
-    this.choosedImage = this.elementOfComponent.nativeElement.querySelector('.choosedImg') as HTMLImageElement
-    this.changeDetectorRef.detectChanges()
-}
-ngOnDestroy(): void {
-
 }
 onSubmit() {
   let PUBLICATION_DATA_OBJECT = { ...this.createForm.value } as interfacePublicationInformation;
@@ -170,12 +160,6 @@ onSubmit() {
     }
 });
 }
-addNameAddModule() {
-  const addPagesPublication = this.createForm.get('nameAddModulesArray') as FormArray;
-  addPagesPublication.push(this.createNameModule());
-  this.setNameModulesArray(addPagesPublication.value);
-}
-
 onPreviewFileSelect(event: Event): void {
   const IMAGE_INPUT_ELEMENT: HTMLInputElement = event.target as HTMLInputElement;
   const CHOOSED_IMAGE: File = IMAGE_INPUT_ELEMENT.files![0];
@@ -197,7 +181,7 @@ onPreviewFileSelect(event: Event): void {
     this.renderer2.addClass(this.chooseIconElement, 'disabled');
   };
 }
-checkForChange(idInputs: number) {
+checkChangePagesForAddNameMoule(idInputs: number) {
   const PARENT_ELEMENT = this.elementOfComponent.nativeElement.querySelector(`[data-idInputs="${idInputs}"]`).parentElement
   const HTML_NAME_INPUT_VALUE = (PARENT_ELEMENT.querySelector('input') as HTMLInputElement).value
   const PAGE_VALUE = this.createForm.value.nameAddModulesArray[idInputs].codePage
@@ -207,7 +191,7 @@ checkForChange(idInputs: number) {
 }
 inputsChangeForAddModule(eventTarget: EventTarget) {
   const INPUT_INDEX = +(eventTarget as HTMLInputElement).getAttribute('placeholder')!.replace(/\D/g, '') - 1;
-  this.checkForChange(INPUT_INDEX)
+  this.checkChangePagesForAddNameMoule(INPUT_INDEX)
 }
 openEditor(eventTarget: EventTarget) {
   this.renderer2.removeClass(this.editorHtmlElement.parentElement, 'disabled')
@@ -223,10 +207,23 @@ openEditorWithContent(eventTarget: EventTarget) {
   }
   this.openEditor(eventTarget)
 }
-acceptUserPublication() {
+acceptPageChanges() {
   this.createForm.value.nameAddModulesArray[this.currentIdPushedInput].codePage = this.tinyEditor.editor.getContent()
-  this.checkForChange(this.currentIdPushedInput)
+  this.checkChangePagesForAddNameMoule(this.currentIdPushedInput)
   this.closeEditorPagePublication()
   this.tinyEditor.editor.setContent('')
+}
+deletePublication() {
+  this.spinner.show()
+  this.publicationControlService.DELETEdeletePublication(this.idPublication)
+    .subscribe({
+      next:() => {
+        this.spinner.hide()
+      this.router.navigateByUrl('/account')
+    },
+      error:(error) => {
+        this.spinner.hide()
+      }
+})
 }
 }

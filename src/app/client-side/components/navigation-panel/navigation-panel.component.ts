@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { UserControlService } from '../../services/user-control.service';
-import { Router } from '@angular/router';
 @Component({
   selector: 'app-navigation-panel',
   standalone: true,
@@ -10,9 +9,10 @@ import { Router } from '@angular/router';
   styleUrl: './navigation-panel.component.scss'
 })
 export class NavigationPanelComponent {
-constructor(private userControlService:UserControlService,private router:Router){
-  
-}
+constructor(
+  private userControlService:UserControlService
+){}
+
 redirectToUserPage(){
   this.userControlService.checkLogin(false)
 }

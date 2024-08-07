@@ -39,13 +39,13 @@
             </div>
         </span>
     </span>
-    <div *ngIf="this.idPublication!=='new'" (click)="deletePublication()" class="deletePublicationBtn chooseElements">
+    <div *ngIf="idPublication!=='new'" (click)="deletePublication()" class="deletePublicationBtn chooseElements">
         <img loading="lazy" src="/assets/images/deleteIcon.svg" alt="123" class="deletePublicationIcon">
     </div>
 </form>
 <span class="editorContainer disabled">
     <div class="functionalsEditorsBtns">
-        <img loading="lazy" src="/assets/images/acceptIcon.webp" alt="accept" (click)="acceptUserPublication()" class="editorIcon">
+        <img loading="lazy" src="/assets/images/acceptIcon.webp" alt="accept" (click)="acceptPageChanges()" class="editorIcon">
         <img loading="lazy" src="/assets/images/cancelIcon.svg" alt="close" (click)="closeEditorPagePublication()"
             class="editorIcon">
     </div>

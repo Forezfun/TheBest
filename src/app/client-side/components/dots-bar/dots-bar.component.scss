@@ -27,6 +27,8 @@
     cursor: pointer;
     text-align: center;
     -webkit-tap-highlight-color: transparent;
+    background: none;
+    border: none;
 }
 .series * {
     pointer-events: none;

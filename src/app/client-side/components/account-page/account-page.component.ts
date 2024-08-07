@@ -23,6 +23,7 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
   currentSwitcherTemplate!: TemplateRef<any>
   changeInformationForm!: FormGroup;
   userInformation$?: Observable<interfaceServerUserData>;
+
   constructor(
     private formBuilder: FormBuilder,
     private changeDetectorRef: ChangeDetectorRef,
@@ -33,10 +34,11 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
     private spinner: NgxSpinnerService,
     private googleAuthService: GoogleAuthService
   ) { }
+  
   ngOnInit(): void {
     this.userControlService.checkLogin(true)
     this.changeInformationForm = this.formBuilder.group({})
-    const SESSION_ID = this.userControlService.getSessionId()
+    const SESSION_ID = this.userControlService.getSessionIdInLocalStorage()
     const USER_ID = this.userControlService.getUserIdInLocalStorage()
     const USER_TYPE = this.userControlService.getUserTypeInLocalStorage()
     if (!SESSION_ID || !USER_ID || !USER_TYPE) { this.exitFromAccount(); return }
@@ -117,7 +119,7 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
     this.changeTemplate('baseInformation')
   }
   changeUserInformation() {
-    const SESSION_ID = this.userControlService.getSessionId()
+    const SESSION_ID = this.userControlService.getSessionIdInLocalStorage()
     const USER_ID = this.userControlService.getUserIdInLocalStorage()
     const USER_TYPE = this.userControlService.getUserTypeInLocalStorage()
     if (!SESSION_ID || !USER_ID || !USER_TYPE) { this.exitFromAccount(); return }
@@ -165,7 +167,7 @@ export class AccountPageComponent implements AfterViewInit, OnInit {
     this.userControlService.deleteLocalUser()
   }
   deleteAccount() {
-    const SESSION_ID = this.userControlService.getSessionId()
+    const SESSION_ID = this.userControlService.getSessionIdInLocalStorage()
     const USER_ID = this.userControlService.getUserIdInLocalStorage()
     const USER_TYPE = this.userControlService.getUserTypeInLocalStorage()
     if (!SESSION_ID || !USER_ID || !USER_TYPE) { this.exitFromAccount(); return }

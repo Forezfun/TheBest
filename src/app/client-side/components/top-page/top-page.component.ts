@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef } from '@angular/core';
 import { NgFor } from '@angular/common';
 import { NavigationPanelComponent } from '../navigation-panel/navigation-panel.component';
 import { PublicationControlService } from '../../services/publication-control.service';
@@ -14,19 +14,22 @@ import { NgxSpinnerService } from 'ngx-spinner';
   styleUrl: './top-page.component.scss'
 })
 export class TopPageComponent implements AfterViewInit {
+  PopularCardsArray: interfaceServerPublicationInformation[] = []
+  private finderInputElement!: HTMLInputElement
+
   constructor(
     private publicationControlService: PublicationControlService,
     private router: Router,
     private elementOfComponent: ElementRef,
     private changeDetectorRef: ChangeDetectorRef,
     private spinner: NgxSpinnerService
-  ) { }
-  PopularCardsArray: interfaceServerPublicationInformation[] = []
-  finderInputElement!: HTMLInputElement
+  ) {}
+
   ngAfterViewInit(): void {
     this.finderInputElement = this.elementOfComponent.nativeElement.querySelector('.inputFinder') as HTMLInputElement;
     this.findPublications()
   }
+
   findPublications() {
     this.spinner.show()
     this.publicationControlService.GETgetAllPublications(this.finderInputElement.value)

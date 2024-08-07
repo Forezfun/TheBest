@@ -16,15 +16,9 @@ import { EditorComponent } from '@tinymce/tinymce-angular';
   styleUrl: './publication-page.component.scss'
 })
 export class PublicationPageComponent implements OnInit {
-  constructor(
-    private routerObservable: ActivatedRoute,
-    private publicationControlService: PublicationControlService,
-    private router: Router
-  ) { }
-  @ViewChild('tinyEditor') tinyEditor!: EditorComponent;
+  @ViewChild('tinyEditor') private tinyEditor!: EditorComponent;
   pagesIdArray$?: Observable<interfacePageInformation[]>;
-
-  editorApiKey = "pa2wb6quye1a8vzzmn5v79fq0iwcr78l02u3tohb4401tufu"
+  editorApiKey = "kted646h6qo85jem7djygvvhmdpjf854nwra0znuhtj0isho"
   editorInitObject: EditorComponent['init'] = {
     selector: 'textarea',
     resize: 'both',
@@ -48,6 +42,13 @@ export class PublicationPageComponent implements OnInit {
       });
     }
   }
+
+  constructor(
+    private routerObservable: ActivatedRoute,
+    private publicationControlService: PublicationControlService,
+    private router: Router
+  ) {}
+
   ngOnInit(): void {
     this.routerObservable.paramMap.subscribe(params => {
       const idPublication = params.get('id')

@@ -1,9 +1,9 @@
 <span class="dotsBar">
     <span class="bar">
-        <div class="series" (click)="chooseDot($event);" *ngFor="let pageData of dotsArray; let i = index" >
+        <button class="series" (click)="chooseDot($event);" *ngFor="let pageData of dotsArray; let i = index" >
             <div [attr.id]="i" class="dot"></div>
             <h3>{{pageData.namePage}}</h3>
-        </div>
+        </button>
     </span>
     <hr>
 </span>

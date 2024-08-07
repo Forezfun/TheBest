@@ -5,13 +5,15 @@ import { PublicationControlService } from './services/publication-control.servic
 import { UserControlService } from './services/user-control.service';
 import { NavigationPanelComponent } from './components/navigation-panel/navigation-panel.component';
 import { GoogleAuthService } from './services/google-auth.service';
+import { ImageControlService } from './services/image-control.service';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   standalone:true,
   imports:[RouterModule,HttpClientModule,NavigationPanelComponent],
-  providers:[PublicationControlService,UserControlService,GoogleAuthService]
+  providers:[PublicationControlService,UserControlService,GoogleAuthService,ImageControlService]
 })
 export class AppComponent {
   title = 'TheBest';

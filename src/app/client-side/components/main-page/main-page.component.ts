@@ -31,7 +31,9 @@ export class MainPageComponent {
   };
   dotsNamesArray: interfacePageInformation[] = Object.keys(this.informationIphonesExampleArray).map(name=>{return {namePage:name,codePage:''}})
 
-  constructor(private renderer2: Renderer2) { }
+  constructor(
+    private renderer2: Renderer2
+  ) { }
   
   changeIphoneId(idIphone: number) {
     this.renderer2.addClass(this.informationCard.nativeElement, 'opacityAnimation')

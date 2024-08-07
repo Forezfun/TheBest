@@ -15,12 +15,14 @@ export interface interfacePublicationInformation {
 export interface interfaceServerPublicationInformation extends interfacePublicationInformation {
   _id: string;
 }
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class PublicationControlService {
   private apiURL = 'http://localhost:8010/proxy/publication/'
-  constructor(private httpClient: HttpClient) { }
+
+  constructor(
+    private httpClient: HttpClient
+  ) {}
+
   POSTcreatePublication(informationPublication: interfacePublicationInformation) {
     return this.httpClient.post(this.apiURL, informationPublication)
   }

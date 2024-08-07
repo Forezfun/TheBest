@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import compress from 'compress-base64';
-@Injectable({
-  providedIn: 'platform'
-})
+@Injectable()
 export class ImageControlService {
   async compressBase64(readerResult: string) {
     const COMPRESSED_STRING = await compress(readerResult, {

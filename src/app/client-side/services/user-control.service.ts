@@ -15,7 +15,7 @@ export interface interfaceUserAuthOrResetPassword {
   email: string;
   password: string;
 }
-export interface interfaceServerUserPublication {
+interface interfaceServerUserPublication {
   namePublication: string;
   idPublication: string;
 }
@@ -26,16 +26,15 @@ export interface interfaceServerUserData {
   publications: interfaceServerUserPublication[];
   sessionId?: string;
 }
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class UserControlService {
   private apiURL = "http://localhost:8010/proxy/user/"
+
   constructor(
     private httpClient: HttpClient,
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) { }
+  ) {}
   POSTcreateUserOnServer(userDataObject: interfaceServerUserData) {
     return this.httpClient.post(this.apiURL, userDataObject)
   }
@@ -95,22 +94,22 @@ export class UserControlService {
   deleteUserTypeInLocalStorage() {
     if (isPlatformBrowser(this.platformId)) { localStorage.removeItem('userType') }
   }
-  getSessionId() {
+  getSessionIdInLocalStorage() {
     if (isPlatformBrowser(this.platformId)) {
-      const sessionData = sessionStorage.getItem('sessionId')
+      const sessionData = localStorage.getItem('sessionId')
       return !sessionData ? undefined : sessionData
     } else {
       return undefined
     }
   }
-  setSessionId(sessionId: string) { 
-    if (isPlatformBrowser(this.platformId)) { sessionStorage.setItem('sessionId', sessionId) }
+  setSessionIdInLocalStorage(sessionId: string) { 
+    if (isPlatformBrowser(this.platformId)) { localStorage.setItem('sessionId', sessionId) }
   }
-  deleteSessionID() {
-    if (isPlatformBrowser(this.platformId)) {sessionStorage.removeItem('sessionId')}
+  deleteSessionIdInLocalStorage() {
+    if (isPlatformBrowser(this.platformId)) {localStorage.removeItem('sessionId')}
   }
   deleteLocalUser() {
-    this.deleteSessionID()
+    this.deleteSessionIdInLocalStorage()
     this.deleteUserIdInLocalStorage()
     this.deleteUserTypeInLocalStorage()
     this.router.navigateByUrl('/login')
@@ -118,9 +117,9 @@ export class UserControlService {
 
   checkLogin(reverse: boolean) {
     if (!reverse) {
-      if (this.getUserIdInLocalStorage()) {  this.router.navigateByUrl('/account') }
+      if (this.getUserIdInLocalStorage() && this.getSessionIdInLocalStorage() && this.getUserTypeInLocalStorage()) {  this.router.navigateByUrl('/account') }
       return
     }
-    if (!this.getUserIdInLocalStorage()) {  this.router.navigateByUrl('/login') }
+    if (!this.getUserIdInLocalStorage() && !this.getSessionIdInLocalStorage() && !this.getUserTypeInLocalStorage()) {  this.router.navigateByUrl('/login') }
   }
 }

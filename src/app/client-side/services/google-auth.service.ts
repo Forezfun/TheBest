@@ -2,14 +2,14 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { interfaceUserChange, interfaceUserServerBaseData } from './user-control.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class GoogleAuthService {
+  private apiURL = 'http://localhost:8010/proxy/google/'
+
   constructor(
     private httpClient:HttpClient
-  ) { }
-  private apiURL = 'http://localhost:8010/proxy/google/'
+  ) {}
+  
   GETgetAuthUrl(){
     return this.httpClient.get(`${this.apiURL}geturl`)
   }

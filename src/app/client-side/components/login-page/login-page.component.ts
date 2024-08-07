@@ -17,21 +17,23 @@ type errorType = 'wrongEmail' | 'lengthPassword' | 'coincidencePassword' | 'wron
   styleUrl: './login-page.component.scss'
 })
 export class LoginPageComponent implements OnInit, AfterViewInit {
-  @ViewChild('login', { read: TemplateRef }) loginTemplate!: TemplateRef<any>
-  @ViewChild('registration', { read: TemplateRef }) registrationTemplate!: TemplateRef<any>
-  @ViewChild('enterEmail', { read: TemplateRef }) emailTemplate!: TemplateRef<any>
-  @ViewChild('enterCode', { read: TemplateRef }) codeTemplate!: TemplateRef<any>
-  @ViewChild('resetPassword', { read: TemplateRef }) resetTemplate!: TemplateRef<any>
+  @ViewChild('login', { read: TemplateRef }) private loginTemplate!: TemplateRef<any>
+  @ViewChild('registration', { read: TemplateRef }) private registrationTemplate!: TemplateRef<any>
+  @ViewChild('enterEmail', { read: TemplateRef }) private emailTemplate!: TemplateRef<any>
+  @ViewChild('enterCode', { read: TemplateRef }) private codeTemplate!: TemplateRef<any>
+  @ViewChild('resetPassword', { read: TemplateRef }) private resetTemplate!: TemplateRef<any>
+  private resetCode!: string
+  private loginSpanHtmlElement!: HTMLSpanElement
   currentTemplate!: TemplateRef<any>
   loginForm!: FormGroup;
   registrationForm!: FormGroup;
   enterEmailForm!: FormGroup;
   enterCodeForm!: FormGroup;
   resetPasswordForm!: FormGroup;
-  loginSpanHtmlElement!: HTMLSpanElement
   userError: string = ' '
   googleAuthLink$?: Observable<string>;
-  private resetCode!: string
+
+
   constructor(private changeDetectorRef: ChangeDetectorRef,
     private elementOfComponent: ElementRef,
     private userControlService: UserControlService,
@@ -40,6 +42,7 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
     private googleAuthService: GoogleAuthService,
     private routerObservable: ActivatedRoute,
   ) { }
+
   ngOnInit(): void {
     this.userControlService.checkLogin(false)
     this.googleRequestUrl()
@@ -56,7 +59,7 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
       email: new FormControl('', [Validators.email, Validators.required]),
     });
     this.enterCodeForm = new FormGroup({
-      code: new FormControl('', [Validators.minLength(6), Validators.required]),
+      code: new FormControl('', [Validators.minLength(6), Validators.required,Validators.maxLength(6)]),
     });
     this.resetPasswordForm = new FormGroup({
       resetPassword: new FormControl('', [Validators.minLength(8), Validators.required]),
@@ -70,7 +73,7 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
         .subscribe({
           next: (resolve) => {
             const USER_DATA = resolve as interfaceUserServerBaseData
-            this.userControlService.setSessionId(USER_DATA.sessionId)
+            this.userControlService.setSessionIdInLocalStorage(USER_DATA.sessionId)
             this.userControlService.setUserIdInLocalStorage(USER_DATA._id)
             this.userControlService.setUserTypeInLocalStorage('google')
             this.spinner.hide()
@@ -88,6 +91,7 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
     this.changeDetectorRef.detectChanges();
     this.loginSpanHtmlElement = this.elementOfComponent.nativeElement.querySelector('.loginSpan') as HTMLSpanElement
   }
+
   registrateUser() {
     this.spinner.show()
     let OBJECT_FOR_REQUEST: interfaceServerUserData = {
@@ -100,7 +104,7 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
       .subscribe({
         next: (resolve) => {
           const USER_SERVER_DATA_OBJECT = resolve as interfaceUserServerBaseData
-          this.userControlService.setSessionId(USER_SERVER_DATA_OBJECT.sessionId)
+          this.userControlService.setSessionIdInLocalStorage(USER_SERVER_DATA_OBJECT.sessionId)
           this.userControlService.setUserIdInLocalStorage(USER_SERVER_DATA_OBJECT._id)
           this.userControlService.setUserTypeInLocalStorage('email')
           this.spinner.hide()
@@ -117,7 +121,7 @@ export class LoginPageComponent implements OnInit, AfterViewInit {
       .subscribe({
         next: (resolve) => {
           const USER_BASE_DATA = resolve as interfaceUserServerBaseData
-          this.userControlService.setSessionId(USER_BASE_DATA.sessionId)
+          this.userControlService.setSessionIdInLocalStorage(USER_BASE_DATA.sessionId)
           this.userControlService.setUserIdInLocalStorage(USER_BASE_DATA._id)
           this.userControlService.setUserTypeInLocalStorage('email')
           this.spinner.hide()

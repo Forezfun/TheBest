@@ -7,6 +7,4 @@ import { NavigationPanelComponent } from '../../navigation-panel/navigation-pane
   templateUrl: './not-found-page.component.html',
   styleUrl: './not-found-page.component.scss'
 })
-export class NotFoundPageComponent {
-
-}
+export class NotFoundPageComponent {}
