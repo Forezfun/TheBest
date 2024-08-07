@@ -5,7 +5,7 @@
 2. Скопируйте одним текстом все команды ниже и выполните их в терминале
 #### Powershell
 `npm install --force; cd src/app/server-side; npm install; cd ../client-side; npm install; cd ../../../`
-### Bash 
+#### Bash 
 `npm install --force && cd src/app/server-side && npm install && cd ../client-side && npm install && cd ../../../`
 ## Запуск проекта
 ### Запуск из главной директории
