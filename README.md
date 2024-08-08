@@ -1,5 +1,8 @@
 # TheBest
-
+## Используемые технологии
+1. Javascript / Typescript / Angular / Nodejs
+2. Html / Scss / Css
+3. Git / MongoDB
 ## Установка библиотек
 1. Откройте главную директорию проекта в терминале
 2. Скопируйте одним текстом все команды ниже и выполните их в терминале
@@ -8,6 +11,8 @@
 #### Bash 
 `npm install --force && cd src/app/server-side && npm install && cd ../client-side && npm install && cd ../../../`
 ## Запуск проекта
+### MongoDB
+1. Создайте новое соединение с URL: `mongodb://localhost:27017`
 ### Запуск из главной директории
 1. Откройте главную директорию проекта в терминале
 2. Выполните команду `npm start`
