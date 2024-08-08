@@ -2,16 +2,16 @@
   <div class="Loader"></div>
   <p style="font-size: 20px; color: white">Loading...</p>
 </ngx-spinner>
-<img loading="lazy" src="/assets/images/ipad.webp" alt=":3" class="ipad decorationObject" />
+<img loading="lazy" src="/assets/images/ipad.webp" alt="" class="ipad decorationObject" />
 <span class="loginSpan">
   <h2 class="loginTitle">SIGN IN</h2>
   <ng-container *ngTemplateOutlet="currentTemplate"></ng-container>
   <a *ngIf="googleAuthLink$ | async as googleAuthLink" class="loginGoogle" [href]="googleAuthLink">
-    <img  loading="lazy" class="loginGoogleIcon" src="/assets/images/googleIcon.svg" alt=":3" />
+    <img  loading="lazy" class="loginGoogleIcon" src="/assets/images/googleIcon.svg" alt="" />
   </a>
   <div class="errorScreen">{{userError}}</div>
 </span>
-<img loading="lazy" src="/assets/images/iphone15.webp" alt=":3" class="iphone decorationObject" />
+<img loading="lazy" src="/assets/images/iphone15.webp" alt="" class="iphone decorationObject" />
 <ng-template #login>
   <form class="form" [formGroup]="loginForm" (ngSubmit)="loginUser()">
     <span class="loginFields">

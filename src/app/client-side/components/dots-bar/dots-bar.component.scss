@@ -1,3 +1,4 @@
+@import 'base.scss';
 .dotsBar{
     width: 80%;
     display: grid;
@@ -21,6 +22,7 @@
     border-color: black;
 }
 .series{
+    font-family: $fontFamily;
     display: flex;
     flex-direction: column;
     align-items: center;
